@@ -8,7 +8,7 @@ var hamburgerWindow = document.getElementById('hamburgerWindow');
 
 
 //localstoregeの内容を取る
-if(localStorage.getItem("score")){
+if(localStorage.getItem("score")&&localStorage.getItem("score")!=="[]"){
   score=JSON.parse(localStorage.getItem('score'));
 }else{//ないときは初期化
   score = [[day]]
