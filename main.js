@@ -221,7 +221,7 @@ function hamburgerClick(){
 
 //記録の抹消
 function deleteButtonClick(day){
-  if(window.confirm(day.id+"の内容を削除します")){
+  if(window.confirm("Delete data.This action cannot be undone.")){
     console.log(score.findIndex(date => date == day.id))
 
     score.splice(score.findIndex(date => date == day.id),1)
