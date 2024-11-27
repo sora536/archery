@@ -10,14 +10,14 @@ var hamburgerWindow = document.getElementById('hamburgerWindow');
 //localstoregeの内容を取る
 if(localStorage.getItem("score")){
   score=JSON.parse(localStorage.getItem('score'));
-  console.log("んfgbｊ")
 }else{//ないときは初期化
-    score = [[day]]
+  score = [[day]]
+  save();  
 }
 //ログインボーナス
 if(score[0][0]!==day){
-    score.unshift([day]);
-    save();
+  score.unshift([day]);
+  save();
 }
 //セーブ
 function save(){
@@ -166,6 +166,7 @@ function resetTable(date){
     score_active =String(data.length+1);
   }
 }
+
 //メニューに日付を追加
 function resetMemu(){
   for (let i=score.length; i>0;i--){
@@ -231,56 +232,4 @@ function deleteButtonClick(day){
 
 }
 
-
-
 resetTable();
-
-
-//メニューに日付を追加
-
-//3本線のやつが押されたとき
-
-
-//日付のやつが押されたとき
-
-//ホームボタンが押されたとき
-
-//スコアボタンが押されたとき
-
-  //新規の場所が選択されたとき
-    //スコアのリストにスコアを追加
-    //今日の行射数を更新
-
-
-
-
-
-
-  //上書きのとき
-    //スコアを更新する
-  
-  //ローカルストレージに保存
-  //スコア氷の更新
-
-
-//スコアが押されたとき(セルの選択)
-
-//スコア表のリロード
-
-    //いつの行射
-    //Arrayの始点
-
-    //行射数
-
-      //各エンドごとの見出し
-
-        //スコアをかく
-    
-
-      //小計、合計をかく
-     
-      //小計をリセット
-     
-//記録の抹消
-
-
