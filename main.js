@@ -16,8 +16,8 @@ if(localStorage.getItem("score")){
 }
 //ログインボーナス
 if(score[0][0]!==day){
-    console.log("gutsbi")
-    score.unshift([day])
+    score.unshift([day]);
+    save();
 }
 //セーブ
 function save(){
