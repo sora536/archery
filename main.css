@@ -159,7 +159,8 @@ td{
     color: #fff;
     background-color: #73b5b1;
     font-size: 50px;
-    aspect-ratio: 1/1;
+    height: 100px;
+    width: 100px;
     border-radius: 100%;
     right: 20px;
     bottom: 20px;
