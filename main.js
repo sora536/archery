@@ -221,7 +221,7 @@ function hamburgerClick(){
 
 //記録の抹消
 function deleteButtonClick(day){
-  if(window.confirm("栗はしつかり拾えましたか？")){
+  if(window.confirm("ガチィ？")){
     console.log(score.findIndex(date => date == day.id))
 
     score.splice(score.findIndex(date => date == day.id),1)
