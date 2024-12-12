@@ -1,8 +1,9 @@
-<html>
+<html lang="ja">
     <head>
         <title>誠にどぅべろつぷ</title>
         <meta charset="UTF-8">
         <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     </head>
     <body>
         <header id="header" class="header">
@@ -32,7 +33,12 @@
             <button id="1" ontouchend="buttonClick(this)" class="white">1</button>
             <button id="M" ontouchend="buttonClick(this)" class="gray">M</button>
         </div>
-        <button class="homeButton" ontouchstart="homeClick()" id="homeButton">+</button>
+        <footer class="footer">
+            <span class="material-icons" ontouchstart="homeClick()">home</span>
+            <span class="material-icons">wysiwyg</span>
+            <span class="material-icons">checklist</span>
+            <span class="material-icons">settings</span>
+        </footer>
         <script src="main.js"></script>
     </body>
 </html>
