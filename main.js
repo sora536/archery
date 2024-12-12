@@ -1,7 +1,6 @@
 //変数定義編
 var day = new Date().getFullYear()+"年"+(new Date().getMonth()+1)+"月"+new Date().getDate()+"日";
 var score=[[]];
-var hamburgerButton = document.getElementById('header-hamburger');
 var hamburgerWindow = document.getElementById('hamburgerWindow');
 
 
@@ -25,7 +24,6 @@ function save(){
 }
 //スコアボタンのクリック
 function buttonClick(scoreButton){
-  hamburgerButton.classList.remove('active');
   hamburgerWindow.classList.remove('open');
   if(score_active == data.length+1){
     score[0].push(scoreButton.id);
@@ -46,7 +44,6 @@ function scoreClick(score){
 
 //スコア氷のリセット
 function resetTable(date){
-  hamburgerButton.classList.remove('active');
   hamburgerWindow.classList.remove('open');
   if(date){//一日トータル
     //特定の日付のスコアを読み出す
@@ -199,7 +196,6 @@ function hamburgerWindow_click(items){
 function homeClick(){
   resetTable();
   scoreButton.classList.remove('open');
-  hamburgerButton.classList.remove('active');
   hamburgerWindow.classList.remove('open');
 }
 
@@ -208,11 +204,9 @@ function homeClick(){
 
 //ハンバーガーメニュのクッリク
 function hamburgerClick(){
-  if (hamburgerButton.classList.contains('active')) {
-    hamburgerButton.classList.remove('active');
+  if (hamburgerWindow.classList.contains('open')) {
     hamburgerWindow.classList.remove('open');
   } else {
-    hamburgerButton.classList.add('active');
     hamburgerWindow.classList.add('open');
   }
   resetMemu();
