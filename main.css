@@ -129,7 +129,7 @@ td{
 
 .footer{
     position: fixed;
-    bottom: 0;
+    bottom: 0px;
     width: 100%;
     height: 120px;
     background-color: rgba(255,255,255,0.9);
