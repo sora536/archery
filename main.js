@@ -201,24 +201,50 @@ function recordWindow_click(items){
 
 
 
-
+//下のボタンのクッリク
 function homeClick(){
   resetTable();
   scoreButton.classList.add('open');
   delete_button.classList.add('open')
   recordWindow.classList.remove('open');
 }
-
-//ハンバーガーメニュのクッリク
 function recordClick(){
   if (recordWindow.classList.contains('open')) {
     recordWindow.classList.remove('open');
   } else {
     recordWindow.classList.add('open');
   }
+
   resetMemu();
 }
+function memoClick(){
+  recordWindow.classList.remove('open');
+  let table =document.getElementById("table");
+  while(table!==null){
+    if(table !==null ){
+      table.remove();
+      table =document.getElementById("table");
+    }
+  }
+  scoreButton.classList.remove('open');
+  delete_button.classList.remove('open');
 
+
+}
+function settingClick(){
+  recordWindow.classList.remove('open');
+  let table =document.getElementById("table");
+  while(table!==null){
+    if(table !==null ){
+      table.remove();
+      table =document.getElementById("table");
+    }
+  }
+  scoreButton.classList.remove('open');
+  delete_button.classList.remove('open');
+
+
+}
 
 //記録の抹消
 function deleteButtonClick(day){
@@ -239,5 +265,6 @@ function scoreDelete(){
   save();
   resetTable();
 }
+
 
 resetTable();
