@@ -1,7 +1,7 @@
 //変数定義編
 var day = new Date().getFullYear()+"年"+(new Date().getMonth()+1)+"月"+new Date().getDate()+"日";
 var score=[[]];
-var hamburgerWindow = document.getElementById('hamburgerWindow');
+var recordWindow = document.getElementById('recordWindow');
 var delete_button =document.getElementById('delete_button');
 
 
@@ -24,7 +24,7 @@ function save(){
 }
 //スコアボタンのクリック
 function buttonClick(scoreButton){
-  hamburgerWindow.classList.remove('open');
+  recordWindow.classList.remove('open');
   if(score_active == data.length+1){
     score[0].push(scoreButton.id);
   }else{
@@ -44,7 +44,7 @@ function scoreClick(score){
 
 //スコア氷のリセット
 function resetTable(date){
-  hamburgerWindow.classList.remove('open');
+  recordWindow.classList.remove('open');
   if(date){//一日トータル
     //特定の日付のスコアを読み出す
     data = score.filter(dates =>dates[0] == date)[0]
@@ -172,19 +172,19 @@ function resetMemu(){
     }
   }
   for (let i=0; i<score.length;i++){
-    ul =document.getElementById("hamburgerWindow-list");
+    ul =document.getElementById("recordWindow-list");
     li=document.createElement("li");
     li.textContent=score[i][0]+"　"+(score[i].length-1)+"射";
-    li.classList.add("hamburgerWindow_items");
+    li.classList.add("recordWindow_items");
     li.setAttribute("id",score[i][0]);
-    li.setAttribute("ontouchend","hamburgerWindow_click(this)")
+    li.setAttribute("ontouchend","recordWindow_click(this)")
     ul.appendChild(li);
 
     button=document.createElement("button");
     button.textContent="削除"
     button.setAttribute("id",score[i]);
     button.setAttribute("ontouchend","deleteButtonClick(this)")
-    button.classList.add("hamburgerWindow_items");
+    button.classList.add("recordWindow_items");
     li.appendChild(button);
   }
 }
@@ -192,8 +192,8 @@ function resetMemu(){
 
 
 
-function hamburgerWindow_click(items){
-  hamburgerClick();
+function recordWindow_click(items){
+  recordClick();
   resetTable(items.id);
   scoreButton.classList.remove('open');
   delete_button.classList.remove('open');
@@ -206,15 +206,15 @@ function homeClick(){
   resetTable();
   scoreButton.classList.add('open');
   delete_button.classList.add('open')
-  hamburgerWindow.classList.remove('open');
+  recordWindow.classList.remove('open');
 }
 
 //ハンバーガーメニュのクッリク
-function hamburgerClick(){
-  if (hamburgerWindow.classList.contains('open')) {
-    hamburgerWindow.classList.remove('open');
+function recordClick(){
+  if (recordWindow.classList.contains('open')) {
+    recordWindow.classList.remove('open');
   } else {
-    hamburgerWindow.classList.add('open');
+    recordWindow.classList.add('open');
   }
   resetMemu();
 }

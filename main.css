@@ -16,7 +16,7 @@ body{
 }
 
 /*ハンバーガーの具*/
-#hamburgerWindow ul{
+#recordWindow ul{
     position: absolute;
     margin: 0;
     bottom: 120px;
@@ -25,7 +25,7 @@ body{
     width: 100%;
     overflow-y: scroll;
 }
-#hamburgerWindow .hamburgerWindow-list li{
+#recordWindow .recordWindow-list li{
     font-size: 30px;
     right: 0px;
     padding: 20px;
@@ -35,7 +35,7 @@ body{
     display: none;
 }
 
-#hamburgerWindow.open .hamburgerWindow-list li{
+#recordWindow.open .recordWindow-list li{
     display: flex;
     animation-name: fadein;
     animation-duration: 0.5s;
