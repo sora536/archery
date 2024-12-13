@@ -59,6 +59,7 @@ body{
     border-radius: 30px;
     border: black solid 1px;
     box-shadow: 4px 4px 4px #dedad2;
+    display: none;
 }
 .score_button .yellow{
     color:black;
@@ -85,7 +86,7 @@ body{
     background-color: gray;
 }
 .score_button.open button{
-    display: none !important;
+    display: inline;
 }
 .scoreTable{
     margin: 0px 30px;
@@ -136,6 +137,21 @@ td{
 }
 .footer span{
     padding:10px 70px ;
+    color:#726854;
     font-size: 100px;
 }
 
+.material-icons.delete_button.open{
+    display: inline;
+    position: fixed;
+    bottom: 170px;
+    right: 30px;
+    padding: 30px 30px 30px 25px;
+    border-radius: 100%;
+    color: #f1f0ed;
+    background-color: #73b5b1;
+    font-size: 60px;
+}
+.material-icons.delete_button{
+    display: none;
+}

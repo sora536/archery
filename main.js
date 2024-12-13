@@ -2,7 +2,7 @@
 var day = new Date().getFullYear()+"年"+(new Date().getMonth()+1)+"月"+new Date().getDate()+"日";
 var score=[[]];
 var hamburgerWindow = document.getElementById('hamburgerWindow');
-
+var delete_button =document.getElementById('delete_button');
 
 
 
@@ -188,19 +188,26 @@ function resetMemu(){
     li.appendChild(button);
   }
 }
+
+
+
+
 function hamburgerWindow_click(items){
   hamburgerClick();
   resetTable(items.id);
-  scoreButton.classList.add('open');
+  scoreButton.classList.remove('open');
+  delete_button.classList.remove('open');
 }
+
+
+
+
 function homeClick(){
   resetTable();
-  scoreButton.classList.remove('open');
+  scoreButton.classList.add('open');
+  delete_button.classList.add('open')
   hamburgerWindow.classList.remove('open');
 }
-
-
-
 
 //ハンバーガーメニュのクッリク
 function hamburgerClick(){
@@ -224,6 +231,13 @@ function deleteButtonClick(day){
 
   }
 
+}
+function scoreDelete(){
+  if(score[0].length>1){
+    score[0].pop();
+  }
+  save();
+  resetTable();
 }
 
 resetTable();
