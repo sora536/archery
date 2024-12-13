@@ -155,3 +155,17 @@ td{
 .material-icons.delete_button{
     display: none;
 }
+
+
+.memo.open{
+    display: block;
+}
+.memo{
+    display: none;
+}
+.setting.open{
+    display: block;
+}
+.setting{
+    display: none;
+}

@@ -4,6 +4,9 @@ var score=[[]];
 var recordWindow = document.getElementById('recordWindow');
 var delete_button =document.getElementById('delete_button');
 
+var memo = document.getElementById('memo');
+var setting = document.getElementById('setting');
+
 
 
 //localstoregeの内容を取る
@@ -197,16 +200,19 @@ function recordWindow_click(items){
   resetTable(items.id);
   scoreButton.classList.remove('open');
   delete_button.classList.remove('open');
+  memo.classList.remove('open');
+  setting.classList.remove('open')
+
 }
-
-
-
 //下のボタンのクッリク
 function homeClick(){
   resetTable();
   scoreButton.classList.add('open');
   delete_button.classList.add('open')
   recordWindow.classList.remove('open');
+  memo.classList.remove('open');
+  setting.classList.remove('open')
+
 }
 function recordClick(){
   if (recordWindow.classList.contains('open')) {
@@ -214,7 +220,6 @@ function recordClick(){
   } else {
     recordWindow.classList.add('open');
   }
-
   resetMemu();
 }
 function memoClick(){
@@ -228,7 +233,8 @@ function memoClick(){
   }
   scoreButton.classList.remove('open');
   delete_button.classList.remove('open');
-
+  memo.classList.add('open');
+  setting.classList.remove('open')
 
 }
 function settingClick(){
@@ -242,8 +248,8 @@ function settingClick(){
   }
   scoreButton.classList.remove('open');
   delete_button.classList.remove('open');
-
-
+  memo.classList.remove('open');
+  setting.classList.add('open')
 }
 
 //記録の抹消
