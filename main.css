@@ -52,7 +52,7 @@ body{
     }
 }
 .score_button button{
-    margin: 0.5% 1%;
+    margin: 10px;
     font-size: 90px;
     width: 30%;
     height: 9%;
