@@ -144,7 +144,7 @@ td{
 .material-icons.delete_button.open{
     display: inline;
     position: fixed;
-    bottom: 170px;
+    bottom: 150px;
     right: 30px;
     padding: 30px 30px 30px 25px;
     border-radius: 100%;
