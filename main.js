@@ -6,9 +6,6 @@ var delete_button =document.getElementById('delete_button');
 
 var memo = document.getElementById('memo');
 var setting = document.getElementById('setting');
-
-
-
 //localstoregeの内容を取る
 if(localStorage.getItem("score")&&localStorage.getItem("score")!=="[]"){
   score=JSON.parse(localStorage.getItem('score'));
