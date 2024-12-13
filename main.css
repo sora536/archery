@@ -93,6 +93,9 @@ body{
     border-collapse: separate;
     border-spacing:10px;
 }
+tr{
+    max-height: 60px;
+}
 th{
     font-size: 25px;
 }
