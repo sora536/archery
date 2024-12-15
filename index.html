@@ -51,17 +51,6 @@
             <span class="material-icons" ontouchstart="memoClick()">checklist</span>
             <span class="material-icons" ontouchstart="settingClick()">settings</span>
         </footer>
-        <script>
-            if ('serviceWorker' in navigator) {
-               navigator.serviceWorker.register('serviceWorker.js')
-              .then(
-              function (registration) {
-                  if (typeof registration.update == 'function') {
-                      registration.update();
-                  }
-              })
-            }
-        </script>
         <script src="main.js"></script>
     </body>
 </html>

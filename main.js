@@ -1,3 +1,18 @@
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('serviceWorker.js')
+ .then(
+ function (registration) {
+     if (typeof registration.update == 'function') {
+         registration.update();
+     }
+ })
+}
+
+
+
+
+
+
 //変数定義編
 var day = new Date().getFullYear()+"年"+(new Date().getMonth()+1)+"月"+new Date().getDate()+"日";
 var score=[[]];
