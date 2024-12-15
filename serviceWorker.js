@@ -1,3 +1,6 @@
+alert("できてますよ")
+
+
 var CACHE_NAME  = "cache-dayo";
 var urlsToCache = [
     "https://sora536.github.io/archery/",
