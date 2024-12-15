@@ -1,5 +1,6 @@
 html{
     touch-action: manipulation;
+    user-select: none;
 }
 body{
     background-color: #f1f0ed;

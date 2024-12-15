@@ -1,4 +1,3 @@
-alert("できてますよ")
 
 
 var CACHE_NAME  = "cache-dayo";
