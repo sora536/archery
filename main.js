@@ -9,7 +9,7 @@ if ('serviceWorker' in navigator) {
 }
 
 
-
+alert("できてます")
 
 
 
