@@ -52,5 +52,16 @@
             <span class="material-icons" ontouchstart="settingClick()">settings</span>
         </footer>
         <script src="main.js"></script>
+        <script>
+            if ('serviceWorker' in navigator) {
+               navigator.serviceWorker.register('serviceWorker.js')
+              .then(
+              function (registration) {
+                  if (typeof registration.update == 'function') {
+                      registration.update();
+                  }
+              })
+            }
+            </script>
     </body>
 </html>
