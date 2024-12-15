@@ -1,6 +1,6 @@
 {
     "name":"ARCHERY記録サイト",
-    "shot_name":"ARCHERY",
+    "short_name":"ARCHERY",
     "theme_color":"#73b5b1",
     "background_color":"#73b5b1",
     "display":"standalone",
