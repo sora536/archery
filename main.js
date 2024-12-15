@@ -1,12 +1,12 @@
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('serviceWorker.js')
- .then(
- function (registration) {
-     if (typeof registration.update == 'function') {
-         registration.update();
-     }
- })
-}
+//if ('serviceWorker' in navigator) {
+//  navigator.serviceWorker.register('serviceWorker.js')
+// .then(
+// function (registration) {
+//     if (typeof registration.update == 'function') {
+//         registration.update();
+//     }
+// })
+//}
 
 
 
