@@ -3,8 +3,8 @@
 var CACHE_NAME  = "cache-dayo";
 var urlsToCache = [
     "https://sora536.github.io/archery/",
-    "favicon.ico",
-    "apple-touch-icon.png"
+    "./favicon.ico",
+    "./apple-touch-icon.png"
 ];
 const CACHE_KEYS = [
     CACHE_NAME
