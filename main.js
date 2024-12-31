@@ -1,287 +1,512 @@
-//if ('serviceWorker' in navigator) {
-//  navigator.serviceWorker.register('serviceWorker.js')
-// .then(
-// function (registration) {
-//     if (typeof registration.update == 'function') {
-//         registration.update();
-//     }
-// })
-//}
+home = document.getElementById("home");
+homeButton = document.getElementById("homeButton");
+record = document.getElementById("record");
+recordButton = document.getElementById("recordButton");
+memo = document.getElementById("memo");
+memoButton = document.getElementById("memoButton");
+setting = document.getElementById("setting");
+settingButton = document.getElementById("settingButton");
 
+homeScoreInfo = document.getElementById("homeScoreInfo");
+select = document.getElementById("select");
+finalSelect = document.getElementById("finalSelect");
+addTableSelect = document.getElementById("addTableSelect");
 
+memoList = document.getElementById("memoList");
 
+recordDate = document.getElementById("recordDate");
+recordDateInput = document.getElementById("recordDateInput");
 
+toggle = document.getElementById("toggle");
 
-//変数定義編
-var day = new Date().getFullYear()+"年"+(new Date().getMonth()+1)+"月"+new Date().getDate()+"日";
-var score=[[]];
-var recordWindow = document.getElementById('recordWindow');
-var delete_button =document.getElementById('delete_button');
+day =
+  new Date().getFullYear() +
+  "年" +
+  (new Date().getMonth() + 1) +
+  "月" +
+  new Date().getDate() +
+  "日";
 
-var memo = document.getElementById('memo');
-var setting = document.getElementById('setting');
-//localstoregeの内容を取る
-if(localStorage.getItem("score")&&localStorage.getItem("score")!=="[]"){
-  score=JSON.parse(localStorage.getItem('score'));
-}else{//ないときは初期化
-  score = [[day]]
-  save();  
+/*
+scoreの構造
+score[["日付",[70m],[50m],[30m],[18m],[10m],[レジスタ]],[...],...]
+*/
+var score = [[]];
+//localstorageのスコアの内容を取る
+if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
+  score = JSON.parse(localStorage.getItem("score"));
+} else {
+  //ないときは初期化
+  score = [[day, [], [], [], [], [], []]];
+  saveScore();
 }
-//ログインボーナス
-if(score[0][0]!==day){
-  score.unshift([day]);
-  save();
+//localstorageの距離の内容を取る
+if (localStorage.getItem("distance")) {
+  homeScoreInfo.textContent = JSON.parse(localStorage.getItem("distance"));
+  select.value = JSON.parse(localStorage.getItem("distance"));
+  document.getElementById(
+    JSON.parse(localStorage.getItem("distance"))
+  ).checked = true;
+} else {
+  //データが無いときに70mデータを表示
+  localStorage.setItem("distance", '"70m"');
+  document.getElementById("70m").checked = true;
 }
-//セーブ
-function save(){
-  localStorage.setItem("score",JSON.stringify(score));
+//ログボ
+if (score[0][0] !== day) {
+  score.unshift([day, [], [], [], [], [], []]);
+  saveScore();
 }
-//スコアボタンのクリック
-function buttonClick(scoreButton){
-  recordWindow.classList.remove('open');
-  if(score_active == data.length+1){
-    score[0].push(scoreButton.id);
-  }else{
-    score[0][score_active]=scoreButton.id
+//スコアをlocalstorageに保存
+function saveScore() {
+  localStorage.setItem("score", JSON.stringify(score));
+}
+//フッターのクリック
+function footerClick(e, id) {
+  event.preventDefault();
+  home.classList.remove("open");
+  homeButton.classList.remove("open");
+  record.classList.remove("open");
+  recordButton.classList.remove("open");
+  memo.classList.remove("open");
+  memoButton.classList.remove("open");
+  setting.classList.remove("open");
+  settingButton.classList.remove("open");
+  e.classList.add("open");
+  id.classList.add("open");
+  if (id.id == "record") {
+    makeScoreTable(0);
+    makeGoodScoreTable(0);
+    recordDateInput.value = day;
+    recordDate.textContent = day;
+    document.getElementById(
+      JSON.parse(localStorage.getItem("distance"))
+    ).checked = true;
   }
-  save();
-  resetTable();
 }
-//スコア氷のクッリク
-function scoreClick(score){
-  if(document.getElementById(score.id).textContent !== "" || score.id == data.length+1){
-    document.getElementById(score_active).classList.remove("scoreActive");
-    document.getElementById(score.id).classList.add("scoreActive");
-    score_active = score.id;
-  }
-} 
-
-//スコア氷のリセット
-function resetTable(date){
-  recordWindow.classList.remove('open');
-  if(date){//一日トータル
-    //特定の日付のスコアを読み出す
-    data = score.filter(dates =>dates[0] == date)[0]
-    //日付の部分よさらば
-    data = data.slice(1)
-  }else{//36射
-    data = score[0].slice(score[0].length-(score[0].length-1)%36)
-  }
-
-  //既存のテーブルを削除
-  let table =document.getElementById("table");
-  while(table!==null){
-    if(table !==null ){
-      table.remove();
-      table =document.getElementById("table");
+//黒いやつのクリック
+function overlayClose() {
+  document.getElementById("overlay").style.display = "none";
+  document.getElementById("saveCheckWindow").style.display = "none";
+  document.getElementById("addTableWindow").style.display = "none";
+  select.value = JSON.parse(localStorage.getItem("distance"));
+}
+//recordのスコア氷を作る、ついで表示まで
+function makeScoreTable(day) {
+  for (let j = 1; j < 6; j++) {
+    if (j == 1) {
+      distance = "70m";
+    } else if (j == 2) {
+      distance = "50m";
+    } else if (j == 3) {
+      distance = "30m";
+    } else if (j == 4) {
+      distance = "18m";
+    } else if (j == 5) {
+      distance = "10m";
     }
-  }
+    document.getElementById(distance + "-scoreTable").innerHTML = "";
+    scoreTable = document.getElementById(distance + "-scoreTable");
+    for (let round = 0; round < score[day][j].length / 36; round++) {
+      //テーブルをラウンド数分作る
+      var clone = scoreTableTemplate.content.cloneNode(true);
+      scoreTable.appendChild(clone);
+      document.getElementById("scoreInfo").textContent =
+        distance + "-" + Number(round + 1);
+      document.getElementById("scoreInfo").setAttribute("id", "");
+      //各エンド毎に
+      for (let end = 0; end < 6; end++) {
+        row = document.getElementById("row-" + Number(end + 1));
+        for (let i = 0; i < 6; i++) {
+          td = document.createElement("td");
+          td.setAttribute(
+            "id",
+            distance + "-" + Number(36 * round + 6 * end + i)
+          );
+          row.appendChild(td);
+        }
+        td = document.createElement("td");
+        td.classList.add("scoreSum");
+        td.setAttribute("id", distance + "Sum-" + Number(6 * round + end + 1));
+        row.appendChild(td);
+        td = document.createElement("td");
+        td.classList.add("scoreSum");
+        td.setAttribute("id", distance + "All-" + Number(6 * round + end + 1));
+        row.appendChild(td);
 
-  //ラウンド分繰り返す
-  for(let round = 1;round<=Math.max(Math.ceil(data.length/36),1);round++){
-    scoreTable =document.getElementById("scoreTable");
-
-    table = document.createElement("table");
-    table.classList.add("table_"+round,"scoreTable");
-    table.id = "table";
-    scoreTable.append(table);
-
-    tr =document.createElement("tr");
-    table.appendChild(tr);
-
-    th =document.createElement("th");
-    tr.appendChild(th);
-
-    for(let k=1;k<=6;k++){
-      th =document.createElement("th");
-      th.textContent = k;
-      tr.appendChild(th);
+        row.setAttribute("id", "");
+      }
     }
+    setScoreTable(distance, score[day][j].length, day);
+  }
+}
 
-    th =document.createElement("th");
-    th.textContent = "小計";
-    tr.appendChild(th);
-
-    th =document.createElement("th");
-    th.textContent = "合計";
-    tr.appendChild(th);
-
-    tr =document.createElement("tr");
-    table.appendChild(tr);
-
-    th=document.createElement("th");
-    th.textContent = "70m-"+(round)/*ラウンドインフォメーション*/ 
-    th.colSpan="9";
-    th.style.textAlign="left";
-    tr.appendChild(th);
-
-    let score_sum=0;
-    let score_all=0;
-    for(let j=1;j<7;j++){
-
-      //各エンドごとの見出し
-      tr =document.createElement("tr");
-      tr.classList.add("end_"+j);
-      table.appendChild(tr);
-
-      th = document.createElement("th");
-      th.textContent=j;
-      tr.appendChild(th);
-  
-      for(let i=1;i<7;i++){
-
-        //スコアをかく
-        td =document.createElement("td");
-        td.textContent = data[36*round+6*j+i-43];
-        td.setAttribute("onclick","scoreClick(this)");
-        td.setAttribute("id",String(6*j+i-6));
-        tr.appendChild(td);
-
-        //小計,合計の計算
-        if( data[36*round+6*j+i-43]=="X"){
-          score_sum+=10;
-          score_all+=10;
-        }else if( data[36*round+6*j+i-43]=="M"){
-        }else{
-          score_sum+=Number(data[36*round+6*j+i-43]);
-          score_all+=Number(data[36*round+6*j+i-43]);
+function makeGoodScoreTable(day) {
+  data = [[], [], [], [], []];
+  for (let j = 1; j < 6; j++) {
+    if (j == 1) {
+      distance = "70m";
+    } else if (j == 2) {
+      distance = "50m";
+    } else if (j == 3) {
+      distance = "30m";
+    } else if (j == 4) {
+      distance = "18m";
+    } else if (j == 5) {
+      distance = "10m";
+    }
+    for (let i = 0; i < score[day][j].length / 6; i++) {
+      num = 0;
+      for (let h = 0; h < 6; h++) {
+        if (score[day][j][6 * i + h] == "X") {
+          num += 10;
+        } else if (score[day][j][6 * i + h] == "M") {
+        } else if (
+          score[day][j][6 * i + h] == undefined ||
+          score[day][j][6 * i + h] == ""
+        ) {
+          num = NaN;
+        } else {
+          num += Number(score[day][j][6 * i + h]);
         }
       }
-
-      //小計
-      td =document.createElement("td");
-      if(6*j <= data.length&&String(score_sum)!=="NaN"){
-        td.textContent = score_sum;
-      }else{
-        td.textContent ="";
+      data[j - 1].push(num);
+    }
+    max = 0;
+    for (let i = 0; i < data[j - 1].length - 5; i++) {
+      data[j - 1][i] = Number(
+        data[j - 1][i] +
+          data[j - 1][i + 1] +
+          data[j - 1][i + 2] +
+          data[j - 1][i + 3] +
+          data[j - 1][i + 4] +
+          data[j - 1][i + 5]
+      );
+    }
+    for (let i = 0; i < 5; i++) {
+      data[j - 1].pop();
+    }
+    for (let i = 0; i < data[j - 1].length; i++) {
+      if (!isNaN(data[j - 1][i])) {
+        max = Math.max(data[j - 1][i], max);
       }
-      td.classList.add("scoreTable_sum");
-      tr.appendChild(td);
+    }
+    num = data[j - 1].indexOf(max) * 6;
+    data[j - 1] = score[day][j].slice(num, num + 36);
 
-      //合計
-      td =document.createElement("td");
-      if(6*j <= data.length &&String(score_all)!=="NaN"){
-        td.textContent = score_all;
-      }else{
-        td.textContent ="";
-      }    
-      td.classList.add("scoreTable_sum");
-      tr.appendChild(td);
+    document.getElementById(distance + "-goodScoreTable").innerHTML = "";
+    scoreTable = document.getElementById(distance + "-goodScoreTable");
+    var clone = scoreTableTemplate.content.cloneNode(true);
+    scoreTable.appendChild(clone);
+    document.getElementById("scoreInfo").textContent = distance + "-goodScore";
+    document.getElementById("scoreInfo").setAttribute("id", "");
+    //各エンド毎に
+    sumAll = 0;
+    for (let end = 0; end < 6; end++) {
+      sum = 0;
+      row = document.getElementById("row-" + Number(end + 1));
+      for (let i = 0; i < 6; i++) {
+        td = document.createElement("td");
+        td.textContent = data[j - 1][6 * end + i];
+        row.appendChild(td);
+        if (data[j - 1][6 * end + i] == "X") {
+          sum += 10;
+          sumAll += 10;
+        } else if (data[j - 1][6 * end + i] == "M") {
+        } else {
+          sum += Number(data[j - 1][6 * end + i]);
+          sumAll += Number(data[j - 1][6 * end + i]);
+        }
+      }
+      if (isNaN(sum)) {
+        sum = "";
+        sumAll = "";
+      }
+      td = document.createElement("td");
+      td.classList.add("scoreSum");
+      td.textContent = sum;
+      row.appendChild(td);
 
-      //小計をリセット
-      score_sum=0;
+      td = document.createElement("td");
+      td.classList.add("scoreSum");
+      td.textContent = sumAll;
+      row.appendChild(td);
+
+      row.setAttribute("id", "");
     }
   }
-  if(date == null){
-    document.getElementById(data.length+1).classList.add("scoreActive")
-    score_active =String(data.length+1);
+}
+//新しいテーブルの用意
+function newTableClick() {
+  if (score[0][6].length !== 0) {
+    addTableSelect.value = select.value;
+    document.getElementById("overlay").style.display = "block";
+    document.getElementById("addTableWindow").style.display = "block";
   }
 }
-
-//メニューに日付を追加
-function resetMemu(){
-  for (let i=score.length; i>0;i--){
-    if(document.getElementById(score[i-1][0])!==null){
-      document.getElementById(score[i-1][0]).remove();
-    }
+//push
+function addTable() {
+  console.log(addTableSelect.value);
+  num = score[0][6].length;
+  for (let i = 0; i < 36 - num; i++) {
+    score[0][6].push("");
   }
-  for (let i=0; i<score.length;i++){
-    ul =document.getElementById("recordWindow-list");
-    li=document.createElement("li");
-    li.textContent=score[i][0]+"　"+(score[i].length-1)+"射";
-    li.classList.add("recordWindow_items");
-    li.setAttribute("id",score[i][0]);
-    li.setAttribute("ontouchend","recordWindow_click(this)")
-    ul.appendChild(li);
-
-    button=document.createElement("button");
-    button.textContent="削除"
-    button.setAttribute("id",score[i]);
-    button.setAttribute("ontouchend","deleteButtonClick(this)")
-    button.classList.add("recordWindow_items");
-    li.appendChild(button);
+  if (addTableSelect.value == "70m") {
+    score[0][1] = score[0][1].concat(score[0][6]);
+  } else if (addTableSelect.value == "50m") {
+    score[0][2] = score[0][2].concat(score[0][6]);
+  } else if (addTableSelect.value == "30m") {
+    score[0][3] = score[0][3].concat(score[0][6]);
+  } else if (addTableSelect.value == "18m") {
+    score[0][4] = score[0][4].concat(score[0][6]);
+  } else if (addTableSelect.value == "10m") {
+    score[0][5] = score[0][5].concat(score[0][6]);
   }
+  score[0][6] = [];
+  saveScore();
+  overlayClose();
+  setScoreTable("home", 36, 0);
 }
-
-
-
-
-function recordWindow_click(items){
-  recordClick();
-  resetTable(items.id);
-  scoreButton.classList.remove('open');
-  delete_button.classList.remove('open');
-  memo.classList.remove('open');
-  setting.classList.remove('open')
-
-}
-//下のボタンのクッリク
-function homeClick(){
-  resetTable();
-  scoreButton.classList.add('open');
-  delete_button.classList.add('open')
-  recordWindow.classList.remove('open');
-  memo.classList.remove('open');
-  setting.classList.remove('open')
-
-}
-function recordClick(){
-  if (recordWindow.classList.contains('open')) {
-    recordWindow.classList.remove('open');
+//素点の入力
+function scoreButtonClick(num) {
+  event.preventDefault();
+  if (score[0][6].length == 36) {
+    finalSelect.value = select.value;
+    document.getElementById("overlay").style.display = "block";
+    document.getElementById("saveCheckWindow").style.display = "block";
   } else {
-    recordWindow.classList.add('open');
+    //レジスタに保存
+    score[0][6].push(num.textContent);
+    setScoreTable("home", score[0][6].length, 0);
   }
-  resetMemu();
+  saveScore();
 }
-function memoClick(){
-  recordWindow.classList.remove('open');
-  let table =document.getElementById("table");
-  while(table!==null){
-    if(table !==null ){
-      table.remove();
-      table =document.getElementById("table");
+//素点の削除
+function scoreRemove() {
+  event.preventDefault();
+  score[0][6].pop();
+  setScoreTable("home", score[0][6].length + 1, 0);
+  saveScore();
+}
+//最終確認のとき
+function saveCheckClick() {
+  event.preventDefault();
+  if (finalSelect.value == "70m") {
+    score[0][1] = score[0][1].concat(score[0][6]);
+  } else if (finalSelect.value == "50m") {
+    score[0][2] = score[0][2].concat(score[0][6]);
+  } else if (finalSelect.value == "30m") {
+    score[0][3] = score[0][3].concat(score[0][6]);
+  } else if (finalSelect.value == "18m") {
+    score[0][4] = score[0][4].concat(score[0][6]);
+  } else if (finalSelect.value == "10m") {
+    score[0][5] = score[0][5].concat(score[0][6]);
+  }
+  score[0][6] = [];
+  saveScore();
+  overlayClose();
+  setScoreTable("home", 36, 0);
+}
+//距離が変わったとき
+function changeDistance(distance) {
+  localStorage.setItem("distance", JSON.stringify(distance.value));
+  homeScoreInfo.textContent = distance.value;
+  document.getElementById(distance.value).checked = true;
+}
+//引き数として距離と表示する行射数day(arrayの場所)をとる
+function setScoreTable(distance, shots, day) {
+  //使うデータの複製
+  if (distance == "70m") {
+    data = score[day][1].slice(
+      score[day][1].length - shots,
+      score[day][1].length
+    );
+  } else if (distance == "50m") {
+    data = score[day][2].slice(
+      score[day][2].length - shots,
+      score[day][2].length
+    );
+  } else if (distance == "30m") {
+    data = score[day][3].slice(
+      score[day][3].length - shots,
+      score[day][3].length
+    );
+  } else if (distance == "18m") {
+    data = score[day][4].slice(
+      score[day][4].length - shots,
+      score[day][4].length
+    );
+  } else if (distance == "10m") {
+    data = score[day][5].slice(
+      score[day][5].length - shots,
+      score[day][5].length
+    );
+  } else if (distance == "home") {
+    data = score[day][6].slice(0, score[day][6].length);
+  }
+  //素点の表示
+  for (let i = 0; i < shots; i++) {
+    if (data[i] == undefined) {
+      document.getElementById(distance + "-" + i).textContent = "";
+    } else {
+      document.getElementById(distance + "-" + i).textContent = data[i];
     }
   }
-  scoreButton.classList.remove('open');
-  delete_button.classList.remove('open');
-  memo.classList.add('open');
-  setting.classList.remove('open')
-
-}
-function settingClick(){
-  recordWindow.classList.remove('open');
-  let table =document.getElementById("table");
-  while(table!==null){
-    if(table !==null ){
-      table.remove();
-      table =document.getElementById("table");
+  //合計の計算、表示
+  for (let round = 1; round - 1 < shots / 36; round++) {
+    scoreSumAll = 0;
+    for (let j = 1; j <= 6; j++) {
+      scoreSum = 0;
+      for (let i = 0; i < 6; i++) {
+        if (data[i + 6 * (j - 1) + 36 * (round - 1)] == "X") {
+          scoreSum += 10;
+          scoreSumAll += 10;
+        } else if (data[i + 6 * (j - 1) + 36 * (round - 1)] == "M") {
+        } else if (
+          data[i + 6 * (j - 1) + 36 * (round - 1)] == undefined ||
+          data[i + 6 * (j - 1) + 36 * (round - 1)] == ""
+        ) {
+          scoreSum = NaN;
+          scoreSumAll = NaN;
+        } else {
+          scoreSum += Number(data[i + 6 * (j - 1) + 36 * (round - 1)]);
+          scoreSumAll += Number(data[i + 6 * (j - 1) + 36 * (round - 1)]);
+        }
+      }
+      if (isNaN(scoreSum) || isNaN(scoreSumAll)) {
+        document.getElementById(
+          distance + "Sum-" + Number(j + 6 * (round - 1))
+        ).textContent = "";
+        document.getElementById(
+          distance + "All-" + Number(j + 6 * (round - 1))
+        ).textContent = "";
+      } else {
+        document.getElementById(
+          distance + "Sum-" + Number(j + 6 * (round - 1))
+        ).textContent = scoreSum;
+        document.getElementById(
+          distance + "All-" + Number(j + 6 * (round - 1))
+        ).textContent = scoreSumAll;
+      }
     }
   }
-  scoreButton.classList.remove('open');
-  delete_button.classList.remove('open');
-  memo.classList.remove('open');
-  setting.classList.add('open')
 }
+//読み込みのときに表示
+setScoreTable("home", 36, 0);
 
-//記録の抹消
-function deleteButtonClick(day){
-  if(window.confirm("ガチィ？")){
-    console.log(score.findIndex(date => date == day.id))
+//record
 
-    score.splice(score.findIndex(date => date == day.id),1)
-    save();
-    window.location.reload();
-
+//上の日付を更新
+recordDate.textContent = day;
+//日付選択を生成
+for (let i = 0; i < score.length; i++) {
+  option = document.createElement("option");
+  option.textContent = score[i][0];
+  recordDateInput.appendChild(option);
+}
+//日付の更新時の処理
+function changeDateInput(date) {
+  recordDate.textContent = date.value;
+  for (let i = 0; i < score.length; i++) {
+    if (score[i][0] == date.value) {
+      makeScoreTable(i);
+      makeGoodScoreTable(i);
+    }
   }
-
 }
-function scoreDelete(){
-  if(score[0].length>1){
-    score[0].pop();
+//いいとこ取りと普通の切り替え
+toggle.addEventListener("click", function (e) {
+  console.log(toggle.checked);
+  for (let j = 1; j < 6; j++) {
+    if (j == 1) {
+      distance = "70m";
+    } else if (j == 2) {
+      distance = "50m";
+    } else if (j == 3) {
+      distance = "30m";
+    } else if (j == 4) {
+      distance = "18m";
+    } else if (j == 5) {
+      distance = "10m";
+    }
+
+    document.getElementById(distance + "-scoreTable").style.display =
+      toggle.checked ? "none" : "block";
+    document.getElementById(distance + "-goodScoreTable").style.display =
+      toggle.checked ? "block" : "none";
   }
-  save();
-  resetTable();
+});
+
+//memo
+
+//memoの削除をsettingで
+var memoContent = [];
+//localstorageの取得
+if (localStorage.getItem("memoContent")) {
+  memoContent = JSON.parse(localStorage.getItem("memoContent"));
+  makeMemo(memoContent);
+}
+function makeMemo(content) {
+  for (let i = 0; i < content.length; i++) {
+    p = document.createElement("p");
+    if (content[i][1]) {
+      p.classList.add("checked");
+    }
+    p.classList.add("memoItem");
+    p.setAttribute("onclick", "memoItemClick(this)");
+    p.setAttribute("id", "memo-" + i);
+    p.textContent = content[i][0];
+    memoList.prepend(p);
+  }
+}
+//memoの追加
+function memoClick(memoInput) {
+  event.preventDefault();
+  memoContent.push([memoInput, false]);
+  localStorage.setItem("memoContent", JSON.stringify(memoContent));
+  p = document.createElement("p");
+  p.classList.add("memoItem");
+  p.setAttribute("id", "memo-" + Number(memoContent.length - 1));
+  p.setAttribute("onclick", "memoItemClick(this)");
+  p.textContent = memoInput;
+  memoList.prepend(p);
+  document.getElementById("memoInput").value = "";
+}
+//表示,非表示の切り替え
+function memoItemClick(item) {
+  event.preventDefault();
+  item.classList.toggle("checked");
+  for (let i = 0; i < memoContent.length; i++) {
+    if (memoContent[i][0] == item.textContent) {
+      memoContent[i][1] = !memoContent[i][1];
+      localStorage.setItem("memoContent", JSON.stringify(memoContent));
+    }
+  }
 }
 
+//以下デバック用のボタン
 
-resetTable();
+function settingScoreAllRemove() {
+  localStorage.removeItem("score");
+  window.location.reload();
+}
+function settingDataAllRemove() {
+  localStorage.clear();
+  window.location.reload();
+}
+function memoCheckedRemove() {
+  memoContent = JSON.parse(localStorage.getItem("memoContent"));
+  num = memoContent.length;
+  num1 = 0;
+  for (let i = 0; i < num; i++) {
+    document.getElementById("memo-" + i).remove();
+    console.log(memoContent[num1]);
+    if (memoContent[num1][1]) {
+      memoContent.splice(num1, 1);
+      num1 -= 1;
+    }
+    num1 += 1;
+  }
+  localStorage.setItem("memoContent", JSON.stringify(memoContent));
+  makeMemo(memoContent);
+}

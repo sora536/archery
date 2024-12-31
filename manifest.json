@@ -1,15 +1,13 @@
 {
-    "name":"ARCHERY記録サイト",
-    "short_name":"ARCHERY",
-    "theme_color":"#73b5b1",
-    "background_color":"#73b5b1",
-    "display":"standalone",
-    "start_url":"https://sora536.github.io/archery/",
-    "icons":[
-        {
-            "src":"./apple-touch-icon.png",
-            "sizes":"180x180",
-            "type":"image/png"
-        }
-    ]
+  "name": "archeryサイト",
+  "short_name": "archery",
+  "theme_color": "#73b5b1",
+  "background_color": "#73b5b1",
+  "display": "standalone",
+  "start_url": "https://sora536.github.io/archery",
+  "icons": {
+    "src": "./apple-touch-icon.png",
+    "sizes": "180x180",
+    "type": "image/png"
+  }
 }

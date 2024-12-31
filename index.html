@@ -1,56 +1,330 @@
+<!DOCTYPE html>
 <html lang="ja">
-    <head>
-        <title>誠にどぅべろつぷ</title>
-        <meta charset="UTF-8">
-        <meta name="description" content="しつかり栗ひろえ">
-        <link rel="icon" href="favicon.ico">
-        <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
-        <link rel="manifest" href="manifest.json">
-        <link rel="stylesheet" href="main.css">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    </head>
-    <body>
-        <header id="header" class="header">
-            <h1>んないすぅ</h1>
-        </header>
-        <div id="recordWindow">
-            <ul class="recordWindow-list"id="recordWindow-list"></ul>
+  <head>
+    <meta charset="UTF-8" />
+    <title>archeryサイト</title>
+    <meta name="description" content="しつかり栗拾え" />
+    <meta http-equiv="content-language" content="ja">
+    <meta name="google" content="notranslate">
+    
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,viewport-fit=cover"
+    />
+    <link rel="icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    />
+    <link rel="stylesheet" href="new-site.css" />
+    <link rel="manifest" href="manifest.json" />
+  </head>
+  <body>
+    <header class="header">
+      <h1>んないすぅ</h1>
+    </header>
+    <div class="home open" id="home">
+      <button class="addButton" onclick="newTableClick()">add+</button>
+      <table class="scoreTable">
+        <thead>
+          <tr>
+            <th></th>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+            <th>6</th>
+            <th>小計</th>
+            <th>合計</th>
+          </tr>
+          <tr>
+            <th colspan="8" style="text-align: left" id="homeScoreInfo">70m</th>
+            <th class="selectBox">
+              <select id="select" onchange="changeDistance(this)">
+                <option value="70m">70m</option>
+                <option value="50m">50m</option>
+                <option value="30m">30m</option>
+                <option value="18m">18m</option>
+                <option value="10m">10m</option>
+              </select>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>1</th>
+            <td id="home-0"></td>
+            <td id="home-1"></td>
+            <td id="home-2"></td>
+            <td id="home-3"></td>
+            <td id="home-4"></td>
+            <td id="home-5"></td>
+            <td class="scoreSum" id="homeSum-1"></td>
+            <td class="scoreSum" id="homeAll-1"></td>
+          </tr>
+          <tr>
+            <th>2</th>
+            <td id="home-6"></td>
+            <td id="home-7"></td>
+            <td id="home-8"></td>
+            <td id="home-9"></td>
+            <td id="home-10"></td>
+            <td id="home-11"></td>
+            <td class="scoreSum" id="homeSum-2"></td>
+            <td class="scoreSum" id="homeAll-2"></td>
+          </tr>
+          <tr>
+            <th>3</th>
+            <td id="home-12"></td>
+            <td id="home-13"></td>
+            <td id="home-14"></td>
+            <td id="home-15"></td>
+            <td id="home-16"></td>
+            <td id="home-17"></td>
+            <td class="scoreSum" id="homeSum-3"></td>
+            <td class="scoreSum" id="homeAll-3"></td>
+          </tr>
+          <tr>
+            <th>4</th>
+            <td id="home-18"></td>
+            <td id="home-19"></td>
+            <td id="home-20"></td>
+            <td id="home-21"></td>
+            <td id="home-22"></td>
+            <td id="home-23"></td>
+            <td class="scoreSum" id="homeSum-4"></td>
+            <td class="scoreSum" id="homeAll-4"></td>
+          </tr>
+          <tr>
+            <th>5</th>
+            <td id="home-24"></td>
+            <td id="home-25"></td>
+            <td id="home-26"></td>
+            <td id="home-27"></td>
+            <td id="home-28"></td>
+            <td id="home-29"></td>
+            <td class="scoreSum" id="homeSum-5"></td>
+            <td class="scoreSum" id="homeAll-5"></td>
+          </tr>
+          <tr>
+            <th>6</th>
+            <td id="home-30"></td>
+            <td id="home-31"></td>
+            <td id="home-32"></td>
+            <td id="home-33"></td>
+            <td id="home-34"></td>
+            <td id="home-35"></td>
+            <td class="scoreSum" id="homeSum-6"></td>
+            <td class="scoreSum" id="homeAll-6"></td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="yellow" ontouchstart="scoreButtonClick(this)">X</button>
+      <button class="yellow" ontouchstart="scoreButtonClick(this)">10</button>
+      <button class="yellow" ontouchstart="scoreButtonClick(this)">9</button>
+      <button class="red" ontouchstart="scoreButtonClick(this)">8</button>
+      <button class="red" ontouchstart="scoreButtonClick(this)">7</button>
+      <button class="blue" ontouchstart="scoreButtonClick(this)">6</button>
+      <button class="blue" ontouchstart="scoreButtonClick(this)">5</button>
+      <button class="black" ontouchstart="scoreButtonClick(this)">4</button>
+      <button class="black" ontouchstart="scoreButtonClick(this)">3</button>
+      <button class="white" ontouchstart="scoreButtonClick(this)">2</button>
+      <button class="white" ontouchstart="scoreButtonClick(this)">1</button>
+      <button class="gray" ontouchstart="scoreButtonClick(this)">M</button>
+      <span class="material-icons scoreRemove" onclick="scoreRemove()"
+        >backspace</span
+      >
+      <div id="saveCheckWindow">
+        <h1>注意</h1>
+        <p>okを押した後に距離の変更はできません</p>
+        <div class="selectBox">
+          <select id="finalSelect" onchange="changeDistance(this)">
+            <option value="70m">70m</option>
+            <option value="50m">50m</option>
+            <option value="30m">30m</option>
+            <option value="18m">18m</option>
+            <option value="10m">10m</option>
+          </select>
+          <button onclick="saveCheckClick()">ok</button>
         </div>
-        <div id="scoreTable"></div>
-        <div class="score_button open" id="scoreButton">
-            <button id="X" ontouchend="buttonClick(this)" class="yellow">X</button>
-            <button id="10" ontouchend="buttonClick(this)" class="yellow">10</button>
-            <button id="9" ontouchend="buttonClick(this)" class="yellow">9</button>
-            <button id="8" ontouchend="buttonClick(this)" class="red">8</button>
-            <button id="7" ontouchend="buttonClick(this)" class="red">7</button>
-            <button id="6" ontouchend="buttonClick(this)" class="blue">6</button>
-            <button id="5" ontouchend="buttonClick(this)" class="blue">5</button>
-            <button id="4" ontouchend="buttonClick(this)" class="black">4</button>
-            <button id="3" ontouchend="buttonClick(this)" class="black">3</button>
-            <button id="2" ontouchend="buttonClick(this)" class="white">2</button>
-            <button id="1" ontouchend="buttonClick(this)" class="white">1</button>
-            <button id="M" ontouchend="buttonClick(this)" class="gray">M</button>
+      </div>
+      <div id="addTableWindow">
+        <h1>注意</h1>
+        <p>okを押した後に編集はできません</p>
+        <div class="selectBox">
+          <select id="addTableSelect" onchange="changeDistance(this)">
+            <option value="70m">70m</option>
+            <option value="50m">50m</option>
+            <option value="30m">30m</option>
+            <option value="18m">18m</option>
+            <option value="10m">10m</option>
+          </select>
+          <button onclick="addTable()">ok</button>
         </div>
-        <span class="material-icons delete_button open" id="delete_button" ontouchstart="scoreDelete()">backspace</span>
-        <div class="memo" id="memo">
-            <h1>メモ機能</h1>
-            <p>coming soon</p>
+      </div>
+    </div>
+    <div class="record" id="record">
+      <div class="recordHeader">
+        <p id="recordDate">date</p>
+        <div class="recordDateInput">
+          <select
+            id="recordDateInput"
+            onchange="changeDateInput(this)"
+          ></select>
         </div>
-        <div class="setting" id="setting">
-            <h1>設定機能</h1>
-            <p>何か設定できてほしい機能ある？</p>
-            <ul>
-                <li>サイトの色</li>
-                <li>背景画像</li>
-            </ul>
-            <P>etc</P>
+        <div class="toggleSwitch">
+          <input id="toggle"type="checkbox" />
+          <label for="toggle"  >
         </div>
-        <footer class="footer">
-            <span class="material-icons" ontouchstart="homeClick()">home</span>
-            <span class="material-icons" ontouchstart="recordClick()">wysiwyg</span>
-            <span class="material-icons" ontouchstart="memoClick()">checklist</span>
-            <span class="material-icons" ontouchstart="settingClick()">settings</span>
-        </footer>
-        <script src="main.js"></script>
-    </body>
+      </div>
+      <div class="recordTab">
+        <label>
+          <input type="radio" name="recordTab" id="70m" />
+          70m
+        </label>
+        <div class="scoreTableTab">
+          <div id="70m-scoreTable" ></div>
+          <div id="70m-goodScoreTable" style="display: none;"></div>
+        </div>
+
+        <label>
+          <input type="radio" name="recordTab" id="50m" />
+          50m
+        </label>
+        <div class="scoreTableTab">
+          <div id="50m-scoreTable"></div>
+          <div id="50m-goodScoreTable" style="display: none;"></div>
+        </div>
+        <label>
+          <input type="radio" name="recordTab" id="30m" />
+          30m
+        </label>
+        <div class="scoreTableTab">
+          <div id="30m-scoreTable"></div>
+          <div id="30m-goodScoreTable" style="display: none;"></div>
+
+        </div>
+        <label>
+          <input type="radio" name="recordTab" id="18m" />
+          18m
+        </label>
+        <div class="scoreTableTab">
+          <div id="18m-scoreTable"></div>
+          <div id="18m-goodScoreTable" style="display: none;"></div>
+
+        </div>
+        <label>
+          <input type="radio" name="recordTab" id="10m" />
+          10m
+        </label>
+        <div class="scoreTableTab">
+          <div id="10m-scoreTable"></div>
+          <div id="10m-goodScoreTable" style="display: none;"></div>
+
+        </div>
+      </div>
+    </div>
+    <div class="memo" id="memo">
+      <form onsubmit="memoClick(this.firstElementChild.value)">
+        <input
+          id="memoInput"
+          type="text"
+          autocomplete="off"
+          placeholder="新しいmemoを作成"
+        />
+      </form>
+
+      <div class="memoList" id="memoList"></div>
+    </div>
+    <div class="setting" id="setting">
+      <h1>setting</h1>
+      <p>今後の展望</p>
+      <ul>
+        <li>距離の確認のskip</li>
+        <li>colorの変更</li>
+        <li>背景画像の適用</li>
+        <li>日付指定での素点の削除</li>
+      </ul>
+      <button onclick="settingScoreAllRemove()">
+        デバック用(スコア全消し)
+      </button>
+      <button onclick="settingDataAllRemove()">
+        デバック用(localstorage全消し)
+      </button>
+      <button onclick="memoCheckedRemove()">
+        checkマークのついたmemoを削除
+      </button>
+    </div>
+    <footer class="footer">
+      <span
+        class="material-icons open"
+        id="homeButton"
+        ontouchstart="footerClick(this,home)"
+        >home</span
+      >
+      <span
+        class="material-icons"
+        id="recordButton"
+        ontouchstart="footerClick(this,record)"
+        >assignment</span
+      >
+      <span
+        class="material-icons"
+        id="memoButton"
+        ontouchstart="footerClick(this,memo)"
+        >checklist</span
+      >
+      <span
+        class="material-icons"
+        id="settingButton"
+        ontouchstart="footerClick(this,setting)"
+        >settings</span
+      >
+    </footer>
+    <!--改良必須、特にidを動的に変えたい-->
+    <template id="scoreTableTemplate">
+      <table class="scoreTable" id="scoreTable">
+        <thead>
+          <tr>
+            <th></th>
+            <th>1</th>
+            <th>2</th>
+            <th>3</th>
+            <th>4</th>
+            <th>5</th>
+            <th>6</th>
+            <th>小計</th>
+            <th>合計</th>
+          </tr>
+          <tr>
+            <th colspan="9" style="text-align: left" id="scoreInfo"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="row-1">
+            <th>1</th>
+          </tr>
+          <tr id="row-2">
+            <th>2</th>
+          </tr>
+          <tr id="row-3">
+            <th>3</th>
+          </tr>
+          <tr id="row-4">
+            <th>4</th>
+          </tr>
+          <tr id="row-5">
+            <th>5</th>
+          </tr>
+          <tr id="row-6">
+            <th>6</th>
+          </tr>
+        </tbody>
+      </table>
+    </template>
+    <div id="overlay" ontouchstart="overlayClose()"></div>
+    <script src="new-site.js"></script>
+  </body>
 </html>
