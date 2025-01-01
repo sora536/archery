@@ -510,3 +510,17 @@ function memoCheckedRemove() {
   localStorage.setItem("memoContent", JSON.stringify(memoContent));
   makeMemo(memoContent);
 }
+
+//serviceWorker
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("serviceWorker.js").then(
+      () => {
+        console.log("登録成功");
+      },
+      () => {
+        console.log("登録失敗");
+      }
+    );
+  });
+}
