@@ -445,3 +445,15 @@ body {
   height: 90svh;
   overflow: scroll;
 }
+
+.settingContent {
+  display: flex;
+  margin: 5px 0;
+}
+.settingContent p {
+  flex: 90%;
+  margin: 0;
+}
+.settingContent .toggleSwitch {
+  flex: 10%;
+}

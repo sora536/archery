@@ -133,7 +133,6 @@ function makeScoreTable(day) {
         td.classList.add("scoreSum");
         td.setAttribute("id", distance + "All-" + Number(6 * round + end + 1));
         row.appendChild(td);
-
         row.setAttribute("id", "");
       }
     }
@@ -200,7 +199,7 @@ function makeGoodScoreTable(day) {
     scoreTable.appendChild(clone);
     document.getElementById("scoreInfo").textContent = distance + "-goodScore";
     document.getElementById("scoreInfo").setAttribute("id", "");
-    //各エンド毎に
+
     sumAll = 0;
     for (let end = 0; end < 6; end++) {
       sum = 0;
@@ -416,7 +415,6 @@ function changeDateInput(date) {
 }
 //いいとこ取りと普通の切り替え
 toggle.addEventListener("click", function (e) {
-  console.log(toggle.checked);
   for (let j = 1; j < 6; j++) {
     if (j == 1) {
       distance = "70m";

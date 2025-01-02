@@ -243,6 +243,7 @@
     </div>
     <div class="setting" id="setting">
       <h1>setting</h1>
+      <p>ここはまだ発展途上なにをどう設定するのか。<br>そもそもこんなサイトに設定などいるのか<br>下のアイコンが3つだとさみしいからつくった<br>などとてもじゃ無いがいえない</p>   
       <p>今後の展望</p>
       <ul>
         <li>距離の確認のskip</li>
@@ -259,6 +260,28 @@
       <button onclick="memoCheckedRemove()">
         checkマークのついたmemoを削除
       </button>
+      <div class="settingContent">
+        <p>設定項目1</p>
+        <div class="toggleSwitch">
+          <input id="settingToggle1"type="checkbox" />
+          <label for="toggle" >
+        </div>
+      </div>
+      <div class="settingContent">
+        <p>設定項目2</p>
+        <div class="toggleSwitch">
+          <input id="settingToggle2"type="checkbox" />
+          <label for="toggle" >
+        </div>
+      </div>
+      <div class="settingContent">
+        <p>設定項目3</p>
+        <div class="toggleSwitch">
+          <input id="settingToggle3"type="checkbox" />
+          <label for="toggle" >
+        </div>
+      </div>
+    
     </div>
     <footer class="footer">
       <span
@@ -286,7 +309,6 @@
         >settings</span
       >
     </footer>
-    <!--改良必須、特にidを動的に変えたい-->
     <template id="scoreTableTemplate">
       <table class="scoreTable" id="scoreTable">
         <thead>
