@@ -445,21 +445,26 @@ if (localStorage.getItem("memoContent")) {
   makeMemo(memoContent);
 }
 function makeMemo(content) {
-  for (let i = 0; i < content.length; i++) {
-    p = document.createElement("p");
-    if (content[i][1]) {
-      p.classList.add("checked");
+  if (content !== null) {
+    for (let i = 0; i < content.length; i++) {
+      p = document.createElement("p");
+      if (content[i][1]) {
+        p.classList.add("checked");
+      }
+      p.classList.add("memoItem");
+      p.setAttribute("onclick", "memoItemClick(this)");
+      p.setAttribute("id", "memo-" + i);
+      p.textContent = content[i][0];
+      memoList.prepend(p);
     }
-    p.classList.add("memoItem");
-    p.setAttribute("onclick", "memoItemClick(this)");
-    p.setAttribute("id", "memo-" + i);
-    p.textContent = content[i][0];
-    memoList.prepend(p);
   }
 }
 //memoの追加
 function memoClick(memoInput) {
   event.preventDefault();
+  if (memoContent == null) {
+    memoContent = [];
+  }
   memoContent.push([memoInput, false]);
   localStorage.setItem("memoContent", JSON.stringify(memoContent));
   p = document.createElement("p");
@@ -485,28 +490,52 @@ function memoItemClick(item) {
 //以下デバック用のボタン
 
 function settingScoreAllRemove() {
-  localStorage.removeItem("score");
-  window.location.reload();
+  if (window.confirm("スコアが消えるよん")) {
+    localStorage.removeItem("score");
+    window.location.reload();
+  }
 }
+
 function settingDataAllRemove() {
-  localStorage.clear();
-  window.location.reload();
+  if (window.confirm("全消したすかる")) {
+    localStorage.clear();
+    window.location.reload();
+  }
 }
 function memoCheckedRemove() {
-  memoContent = JSON.parse(localStorage.getItem("memoContent"));
-  num = memoContent.length;
-  num1 = 0;
-  for (let i = 0; i < num; i++) {
-    document.getElementById("memo-" + i).remove();
-    console.log(memoContent[num1]);
-    if (memoContent[num1][1]) {
-      memoContent.splice(num1, 1);
-      num1 -= 1;
+  if (window.confirm("消したくなることを書いたってコト?")) {
+    if (!window.confirm("続きの話をskipしますか")) {
+      alert("'◯◯ってコト?'が最近ちいかわとやらに勘違いされる。");
+      alert("誠に遺憾です。(by 知り合いのミオファ)");
+      alert("私もとても由々しき事態と認識しております");
+      alert("'◯◯って...コト?'と'◯◯ってコト?'");
+      alert("この大きな違いにすら気づいていないとは");
+      alert("日々の生活の中でしつかりと構文を理解、");
+      alert("読解ができていないのでは無いかと心配になります");
+      alert("この溜めの有無によってホロリスなのか");
+      alert("それともちいかわファンなのか");
+      alert("次の会話において組み込む語録が大きく変わっていきます");
+      alert("日常に溢れている身内ネタにレーダーを張り");
+      alert("同じ趣味の同士を見つけましょう");
+      alert("ノー筋肉！ノーライフ！");
     }
-    num1 += 1;
+    memoContent = JSON.parse(localStorage.getItem("memoContent"));
+
+    num = memoContent.length;
+
+    num1 = 0;
+    for (let i = 0; i < num; i++) {
+      document.getElementById("memo-" + i).remove();
+      console.log(memoContent[num1]);
+      if (memoContent[num1][1]) {
+        memoContent.splice(num1, 1);
+        num1 -= 1;
+      }
+      num1 += 1;
+    }
+    localStorage.setItem("memoContent", JSON.stringify(memoContent));
+    makeMemo(memoContent);
   }
-  localStorage.setItem("memoContent", JSON.stringify(memoContent));
-  makeMemo(memoContent);
 }
 
 //serviceWorker
