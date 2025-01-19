@@ -40,6 +40,28 @@ if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
   score = [[day, [], [], [], [], [], []]];
   saveScore();
 }
+for (let i = 0; i < score.length; i++) {
+  if (
+    score[i][1].length +
+      score[i][2].length +
+      score[i][3].length +
+      score[i][4].length +
+      score[i][5].length +
+      score[i][6].length ==
+    0
+  ) {
+    console.log(score[i]);
+    score.splice(i, 1);
+  }
+  saveScore();
+}
+if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
+  score = JSON.parse(localStorage.getItem("score"));
+} else {
+  //ないときは初期化
+  score = [[day, [], [], [], [], [], []]];
+  saveScore();
+}
 //localstorageの距離の内容を取る
 if (localStorage.getItem("distance")) {
   homeScoreInfo.textContent = JSON.parse(localStorage.getItem("distance"));
@@ -52,6 +74,7 @@ if (localStorage.getItem("distance")) {
   localStorage.setItem("distance", '"70m"');
   document.getElementById("70m").checked = true;
 }
+
 //ログボ
 if (score[0][0] !== day) {
   score.unshift([day, [], [], [], [], [], []]);
