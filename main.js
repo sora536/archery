@@ -567,3 +567,9 @@ if ("serviceWorker" in navigator) {
     );
   });
 }
+
+function settingShowLocalstorage() {
+  alert(JSON.parse(localStorage.getItem("memoContent")));
+  alert(JSON.parse(localStorage.getItem("distance")));
+  alert(JSON.parse(localStorage.getItem("score")));
+}
