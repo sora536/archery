@@ -40,14 +40,13 @@ if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
   score = [[day, [], [], [], [], [], []]];
   saveScore();
 }
-for (let i = 0; i < score.length; i++) {
+for (let i = 1; i < score.length; i++) {
   if (
     score[i][1].length +
       score[i][2].length +
       score[i][3].length +
       score[i][4].length +
-      score[i][5].length +
-      score[i][6].length ==
+      score[i][5].length ==
     0
   ) {
     console.log(score[i]);
@@ -55,13 +54,7 @@ for (let i = 0; i < score.length; i++) {
   }
   saveScore();
 }
-if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
-  score = JSON.parse(localStorage.getItem("score"));
-} else {
-  //ないときは初期化
-  score = [[day, [], [], [], [], [], []]];
-  saveScore();
-}
+
 //localstorageの距離の内容を取る
 if (localStorage.getItem("distance")) {
   homeScoreInfo.textContent = JSON.parse(localStorage.getItem("distance"));
