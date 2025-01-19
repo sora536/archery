@@ -27,10 +27,13 @@ day =
   new Date().getDate() +
   "日";
 
-/*
-scoreの構造
-score[["日付",[70m],[50m],[30m],[18m],[10m],[レジスタ]],[...],...]
-*/
+//memoの削除をsettingで
+var memoContent = [];
+//localstorageの取得
+if (localStorage.getItem("memoContent")) {
+  memoContent = JSON.parse(localStorage.getItem("memoContent"));
+  makeMemo(memoContent);
+}
 var score = [[]];
 //localstorageのスコアの内容を取る
 if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
@@ -40,16 +43,18 @@ if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
   score = [[day, [], [], [], [], [], []]];
   saveScore();
 }
+let num2 = 0;
 for (let i = 1; i < score.length; i++) {
+  num2 += 1;
   if (
-    score[i][1].length +
-      score[i][2].length +
-      score[i][3].length +
-      score[i][4].length +
-      score[i][5].length ==
+    score[num2][1].length +
+      score[num2][2].length +
+      score[num2][3].length +
+      score[num2][4].length +
+      score[num2][5].length ==
     0
   ) {
-    console.log(score[i]);
+    num2 -= 1;
     score.splice(i, 1);
   }
   saveScore();
@@ -73,6 +78,37 @@ if (score[0][0] !== day) {
   score.unshift([day, [], [], [], [], [], []]);
   saveScore();
 }
+setScoreTable("home", 36, 0);
+
+//上の日付を更新
+recordDate.textContent = day;
+//日付選択を生成
+for (let i = 0; i < score.length; i++) {
+  option = document.createElement("option");
+  option.textContent = score[i][0];
+  recordDateInput.appendChild(option);
+}
+toggle.addEventListener("click", function (e) {
+  for (let j = 1; j < 6; j++) {
+    if (j == 1) {
+      distance = "70m";
+    } else if (j == 2) {
+      distance = "50m";
+    } else if (j == 3) {
+      distance = "30m";
+    } else if (j == 4) {
+      distance = "18m";
+    } else if (j == 5) {
+      distance = "10m";
+    }
+
+    document.getElementById(distance + "-scoreTable").style.display =
+      toggle.checked ? "none" : "block";
+    document.getElementById(distance + "-goodScoreTable").style.display =
+      toggle.checked ? "block" : "none";
+  }
+});
+
 //スコアをlocalstorageに保存
 function saveScore() {
   localStorage.setItem("score", JSON.stringify(score));
@@ -406,19 +442,9 @@ function setScoreTable(distance, shots, day) {
     }
   }
 }
-//読み込みのときに表示
-setScoreTable("home", 36, 0);
 
 //record
 
-//上の日付を更新
-recordDate.textContent = day;
-//日付選択を生成
-for (let i = 0; i < score.length; i++) {
-  option = document.createElement("option");
-  option.textContent = score[i][0];
-  recordDateInput.appendChild(option);
-}
 //日付の更新時の処理
 function changeDateInput(date) {
   recordDate.textContent = date.value;
@@ -429,37 +455,9 @@ function changeDateInput(date) {
     }
   }
 }
-//いいとこ取りと普通の切り替え
-toggle.addEventListener("click", function (e) {
-  for (let j = 1; j < 6; j++) {
-    if (j == 1) {
-      distance = "70m";
-    } else if (j == 2) {
-      distance = "50m";
-    } else if (j == 3) {
-      distance = "30m";
-    } else if (j == 4) {
-      distance = "18m";
-    } else if (j == 5) {
-      distance = "10m";
-    }
-
-    document.getElementById(distance + "-scoreTable").style.display =
-      toggle.checked ? "none" : "block";
-    document.getElementById(distance + "-goodScoreTable").style.display =
-      toggle.checked ? "block" : "none";
-  }
-});
 
 //memo
 
-//memoの削除をsettingで
-var memoContent = [];
-//localstorageの取得
-if (localStorage.getItem("memoContent")) {
-  memoContent = JSON.parse(localStorage.getItem("memoContent"));
-  makeMemo(memoContent);
-}
 function makeMemo(content) {
   if (content !== null) {
     for (let i = 0; i < content.length; i++) {
@@ -553,6 +551,11 @@ function memoCheckedRemove() {
     makeMemo(memoContent);
   }
 }
+function settingShowLocalstorage() {
+  alert(JSON.parse(localStorage.getItem("memoContent")));
+  alert(JSON.parse(localStorage.getItem("distance")));
+  alert(JSON.parse(localStorage.getItem("score")));
+}
 
 //serviceWorker
 if ("serviceWorker" in navigator) {
@@ -566,10 +569,4 @@ if ("serviceWorker" in navigator) {
       }
     );
   });
-}
-
-function settingShowLocalstorage() {
-  alert(JSON.parse(localStorage.getItem("memoContent")));
-  alert(JSON.parse(localStorage.getItem("distance")));
-  alert(JSON.parse(localStorage.getItem("score")));
 }
