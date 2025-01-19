@@ -43,9 +43,16 @@ if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
   score = [[day, [], [], [], [], [], []]];
   saveScore();
 }
+if (score[0][0] !== day) {
+  score.unshift([day, [], [], [], [], [], []]);
+  saveScore();
+}
 let num2 = 0;
-for (let i = 1; i < score.length; i++) {
+let num3 = score.length;
+for (let i = 1; i < num3; i++) {
   num2 += 1;
+  console.log(score[num2]);
+  console.log(i);
   if (
     score[num2][1].length +
       score[num2][2].length +
@@ -54,8 +61,8 @@ for (let i = 1; i < score.length; i++) {
       score[num2][5].length ==
     0
   ) {
+    score.splice(num2, 1);
     num2 -= 1;
-    score.splice(i, 1);
   }
   saveScore();
 }
@@ -73,11 +80,6 @@ if (localStorage.getItem("distance")) {
   document.getElementById("70m").checked = true;
 }
 
-//ログボ
-if (score[0][0] !== day) {
-  score.unshift([day, [], [], [], [], [], []]);
-  saveScore();
-}
 setScoreTable("home", 36, 0);
 
 //上の日付を更新
