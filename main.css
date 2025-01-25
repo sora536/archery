@@ -446,6 +446,14 @@ body {
   overflow: scroll;
 }
 
+.setting details {
+  text-align: left;
+}
+.setting .questionList details {
+  margin: 0 20px;
+  text-align: left;
+}
+
 .settingContent {
   display: flex;
   margin: 5px 0;
@@ -458,6 +466,8 @@ body {
   flex: 10%;
 }
 .setting button {
-  margin: 10px;
+  margin: 10px auto;
   padding: 10px;
+  width: 70vw;
+  text-align: center;
 }

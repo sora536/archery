@@ -242,27 +242,67 @@
       <div class="memoList" id="memoList"></div>
     </div>
     <div class="setting" id="setting">
-      <h1>setting</h1>
-      <p>ここはまだ発展途上なにをどう設定するのか。<br>そもそもこんなサイトに設定などいるのか<br>下のアイコンが3つだとさみしいからつくった<br>などとてもじゃ無いがいえない</p>   
-      <p>今後の展望</p>
-      <ul>
-        <li>距離の確認のskip</li>
-        <li>colorの変更</li>
-        <li>背景画像の適用</li>
-        <li>日付指定での素点の削除</li>
-      </ul>
+      <details class="questionList">
+        <summary>よくある質問</summary>
+        <details>
+          <summary>距離の変更</summary>
+          homeの"合計"の下にあるやつで変更してね
+        </details>
+        <details>
+          <summary>いいとこ取りしたい</summary>
+          スコアが書かれてるとこの右上のtoggleButtonで切り替えが可能
+        </details>
+        <details>
+          <summary>過去のスコアをみたい</summary>
+          スコアのとこのいかにもなところ過去のスコアが見れるよ
+        </details>
+        <details>
+          <summary>保存したスコアの変更がしたい</summary>
+          許せ。実装はできるけどなんせデザイン案がない。
+        </details>
+        <details>
+          <summary>1ラウンド終える前に距離を変更したい</summary>
+          homeの右上の"add+"のボタンを押すと新しいスコアテーブルを出せるよ。ただし、連続したデータでないといいとこ取りはされないので注意。
+        </details>
+        <details>
+          <summary>memoが追加できない</summary>
+          enterキーまたはそれに準ずるものを押して追加
+        </details>
+        <details>
+          <summary>memoを削除したい</summary>
+          削除したいmemoの項目をタップしてから、settingsの"checkマークのついたmemoを削除"をタップ。デザインゆるぼ
+        </details>
+        <details>
+          <summary>memoの順番を入れ替えたい</summary>
+          残念。そんな機能はないよ。だって需要なくね。(デザインが思いつかない)
+        </details>
+        <details>
+          <summary>なんでこんなに低クオリティなの</summary>
+          HTML,CSS,JavaScriptを学んで初めての作品だから。処女作にしてはいい出来だよね(圧)
+        </details>
+        <details>
+          <summary>コードいじって改良したい</summary>
+          読めるもんなら読んでみろ。連絡くれれば権限あげるよ
+        </details>
+        <details>
+          <summary>セキュリティは?</summary>
+          保存してるデータに個人情報もクソもないから大丈夫だと思ってる。
+        </details>
+      </details>
+      <button onclick="memoCheckedRemove()">
+        checkマークのついたmemoを削除
+      </button>
       <button onclick="settingScoreAllRemove()">
         デバック用(スコア全消し)
       </button>
       <button onclick="settingDataAllRemove()">
         デバック用(localstorage全消し)
       </button>
-      <button onclick="memoCheckedRemove()">
-        checkマークのついたmemoを削除
-      </button>
       <button onclick="settingShowLocalstorage()">
-        localstorageを表示
+        デバック用(localstorageを表示)
       </button>
+      <p>デザイン案と機能を送ってくれたら実装するよ</p>
+      <!--
       <div class="settingContent">
         <p>設定項目1</p>
         <div class="toggleSwitch">
@@ -285,7 +325,7 @@
         </div>
       </div>
       <a href="http://line.me/R/msg/text/?https://sora536.github.io/archery%0aLINE共有のテスト" target="_blank" rel="nofollow noopener">LINE共有のテスト</a>
-
+    -->
     </div>
     <footer class="footer">
       <span
