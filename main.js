@@ -43,10 +43,12 @@ if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
   score = [[day, [], [], [], [], [], []]];
   saveScore();
 }
+//ログボ
 if (score[0][0] !== day) {
   score.unshift([day, [], [], [], [], [], []]);
   saveScore();
 }
+//不要な日付を削除
 let num2 = 0;
 let num3 = score.length;
 for (let i = 1; i < num3; i++) {
