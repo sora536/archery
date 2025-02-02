@@ -10,12 +10,23 @@ body {
 }
 
 /*色の定義*/
-:root {
+html {
   --main-color: #a4bfda;
-  --sub-color: #659dc0;
   --text-color: #40403e;
   --shadow-color: rgba(208, 216, 218, 0.6);
   --background-color: #f0f2f1;
+}
+html.Shigure {
+  --main-color: #fedfda;
+  --text-color: #775651;
+  --shadow-color: rgba(255, 243, 227, 0.6);
+  --background-color: #fffcf9;
+}
+html.Kazama {
+  --main-color: #b7dabc;
+  --text-color: #765513;
+  --shadow-color: rgba(220, 161, 44, 0.1);
+  --background-color: #fcf9f1;
 }
 /*黒くする*/
 #overlay {
@@ -213,33 +224,33 @@ body {
   height: 8.5svh;
   width: 31vw;
   font-size: 30px;
-  border: 1px solid var(--text-color);
+  border: 1px solid black;
   border-radius: 10px;
   box-shadow: 2px 2px var(--shadow-color);
 }
 .home .yellow {
   background-color: yellow;
-  color: var(--text-color);
+  color: black;
 }
 .home .red {
   background-color: red;
-  color: var(--text-color);
+  color: black;
 }
 .home .blue {
   background-color: blue;
-  color: var(--background-color);
+  color: white;
 }
 .home .black {
   background-color: black;
-  color: var(--background-color);
+  color: white;
 }
 .home .white {
   background-color: white;
-  color: var(--text-color);
+  color: black;
 }
 .home .gray {
   background-color: gray;
-  color: var(--text-color);
+  color: black;
 }
 .home .scoreRemove {
   position: absolute;
@@ -387,7 +398,7 @@ body {
 
 .toggleSwitch input:checked {
   + label {
-    background-color: var(--sub-color);
+    background-color: var(--main-color);
     &:after {
       left: 18px;
     }

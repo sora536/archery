@@ -1,15 +1,13 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="ja" id="html" class="">
   <head>
     <meta charset="UTF-8" />
-    <title>archeryサイト</title>
+    <title>Ianse◯的さむしんぐ</title>
     <meta name="description" content="'ホーム画面に追加'をして疑似的にアプリ化することを強く推奨します" />
     <meta http-equiv="content-language" content="ja">
     <meta name="google" content="notranslate">
-    <!--キャッシュを使用しない
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Cache-Control" content="no-cache">
-    -->
     <meta
       name="viewport"
       content="width=device-width,initial-scale=1.0,viewport-fit=cover"
@@ -31,7 +29,7 @@
   </head>
   <body>
     <header class="header">
-      <h1>archeryサイト</h1>
+      <h1>Ianse◯的さむしんぐ</h1>
     </header>
     <div class="home open" id="home">
       <button class="addButton" onclick="newTableClick()">add+</button>
@@ -308,6 +306,11 @@
         デバック用(localstorageを表示)
       </button>
       <p>デザイン案と機能を送ってくれたら実装するよ</p>
+      <select onchange="changeTheme(this.value)">
+        <option value="">basic</option>
+        <option value="Shigure">Shigure</option>
+        <option value="Kazama">Kazama</option>
+      </select>
       <!--
       <div class="settingContent">
         <p>設定項目1</p>

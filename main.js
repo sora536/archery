@@ -18,6 +18,12 @@ recordDate = document.getElementById("recordDate");
 recordDateInput = document.getElementById("recordDateInput");
 
 toggle = document.getElementById("toggle");
+if (localStorage.getItem("distance")) {
+  console.log("a");
+  document.getElementById("html").className = JSON.parse(
+    localStorage.getItem("theme")
+  );
+}
 
 day =
   new Date().getFullYear() +
@@ -503,6 +509,11 @@ function memoItemClick(item) {
       localStorage.setItem("memoContent", JSON.stringify(memoContent));
     }
   }
+}
+//setting
+function changeTheme(theme) {
+  document.getElementById("html").className = theme;
+  localStorage.setItem("theme", JSON.stringify(theme));
 }
 
 //以下デバック用のボタン
