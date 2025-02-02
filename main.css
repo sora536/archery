@@ -364,7 +364,7 @@ body {
 .toggleSwitch label {
   width: 36px;
   height: 20px;
-  background: #ccc;
+  background: var(--shadow-color);
   position: relative;
   display: inline-block;
   border-radius: 46px;
@@ -413,7 +413,6 @@ body {
   margin: 2svh 0 0 0;
   padding: 0.5em;
   font-size: 16px;
-  color: var(--text-color);
   background-color: var(--background-color);
   border: 1px solid var(--text-color);
   border-radius: 20px;
