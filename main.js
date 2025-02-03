@@ -19,7 +19,6 @@ recordDateInput = document.getElementById("recordDateInput");
 
 toggle = document.getElementById("toggle");
 if (localStorage.getItem("distance")) {
-  console.log("a");
   document.getElementById("html").className = JSON.parse(
     localStorage.getItem("theme")
   );
@@ -303,7 +302,6 @@ function newTableClick() {
 }
 //push
 function addTable() {
-  console.log(addTableSelect.value);
   num = score[0][6].length;
   for (let i = 0; i < 36 - num; i++) {
     score[0][6].push("");
@@ -546,17 +544,12 @@ function memoCheckedRemove() {
     }
     memoContent = JSON.parse(localStorage.getItem("memoContent"));
 
-    num = memoContent.length;
-
-    num1 = 0;
-    for (let i = 0; i < num; i++) {
+    for (let i = 0; i < memoContent.length; i++) {
       document.getElementById("memo-" + i).remove();
-      console.log(memoContent[num1]);
-      if (memoContent[num1][1]) {
-        memoContent.splice(num1, 1);
-        num1 -= 1;
+      if (memoContent[i][1]) {
+        memoContent.splice(i, 1);
+        i -= 1;
       }
-      num1 += 1;
     }
     localStorage.setItem("memoContent", JSON.stringify(memoContent));
     makeMemo(memoContent);
