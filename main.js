@@ -44,6 +44,22 @@ var score = [[]];
 //localstorageのスコアの内容を取る
 if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
   score = JSON.parse(localStorage.getItem("score"));
+  //不要な日付を削除
+  for (let i = 1; i < score.length; i++) {
+    if (
+      score[i][1].length +
+        score[i][2].length +
+        score[i][3].length +
+        score[i][4].length +
+        score[i][5].length +
+        score[i][6].length ==
+      0
+    ) {
+      score.splice(i, 1);
+      i -= 1;
+    }
+    saveScore();
+  }
 } else {
   //ないときは初期化
   score = [[day, [], [], [], [], [], []]];
@@ -52,26 +68,6 @@ if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
 //ログボ
 if (score[0][0] !== day) {
   score.unshift([day, [], [], [], [], [], []]);
-  saveScore();
-}
-//不要な日付を削除
-let num2 = 0;
-let num3 = score.length;
-for (let i = 1; i < num3; i++) {
-  num2 += 1;
-  console.log(score[num2]);
-  console.log(i);
-  if (
-    score[num2][1].length +
-      score[num2][2].length +
-      score[num2][3].length +
-      score[num2][4].length +
-      score[num2][5].length ==
-    0
-  ) {
-    score.splice(num2, 1);
-    num2 -= 1;
-  }
   saveScore();
 }
 
