@@ -3,7 +3,7 @@
   "short_name": "archery",
   "theme_color": "#73b5b1",
   "background_color": "#73b5b1",
-  "display": "standalone",
+  "display": "fullscreen",
   "start_url": "index.html",
   "icons": [
     {
