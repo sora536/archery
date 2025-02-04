@@ -600,6 +600,11 @@ function memoCheckedRemove() {
     window.location.reload();
   }
 }
+function memoCheckedRemove() {
+  if (window.confirm("消して悪いことは無いから消しまくれ")) {
+    caches.delete("cache");
+  }
+}
 function settingShowLocalstorage() {
   alert(JSON.parse(localStorage.getItem("memoContent")));
   alert(JSON.parse(localStorage.getItem("distance")));
