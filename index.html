@@ -230,16 +230,13 @@
       </div>
     </div>
     <div class="memo" id="memo">
-      <form onsubmit="memoClick(this.firstElementChild.value)">
-        <input
-          id="memoInput"
-          type="text"
-          autocomplete="off"
-          placeholder="新しいmemoを作成"
-        />
-      </form>
+      <p class="makeFolder"ontouchstart="addNewFolder()"><span
+      class="material-icons"
+      
+      >create_new_folder</span
+    >新しいフォルダを作る</p>
+    <div id="memoMain"></div>
 
-      <div class="memoList" id="memoList"></div>
     </div>
     <div class="setting" id="setting">
       <details class="questionList">
@@ -290,7 +287,7 @@
         </details>
       </details>
       <button onclick="memoCheckedRemove()">
-        checkマークのついたmemoを削除
+        デバック用(memo全消し)
       </button>
       <button onclick="settingScoreAllRemove()">
         デバック用(スコア全消し)
@@ -344,7 +341,7 @@
         class="material-icons"
         id="recordButton"
         ontouchstart="footerClick(this,record)"
-        >assignment</span
+        >content_paste</span
       >
       <span
         class="material-icons"
@@ -398,6 +395,21 @@
           </tr>
         </tbody>
       </table>
+    </template>
+    <template id="memoFolderTemplate">
+      <details id="memoFolder">
+        <summary id="memoTitle"></summary>
+        <form onsubmit="memoClick(this.firstElementChild.value,this.firstElementChild.id)">
+          <input
+          id="memoInput"
+          type="text"
+          autocomplete="off"
+          placeholder="新しいmemoを作成"
+        />
+        </form>
+        <div id="memoList"></div>
+      </details>
+
     </template>
     <div id="overlay" ontouchstart="overlayClose()"></div>
     <script src="main.js"></script>

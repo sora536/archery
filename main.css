@@ -419,6 +419,15 @@ html.Kazama {
   height: 90svh;
   overflow: scroll;
 }
+.makeFolder {
+  display: flex;
+  color: var(--text-color);
+  margin: 7px 0;
+}
+.makeFolder span {
+  margin: 0 5px;
+  padding: 0;
+}
 
 .memo input {
   width: 85vw;
@@ -433,22 +442,47 @@ html.Kazama {
 .memo input:focus {
   outline: none;
 }
-.memo .memoList {
+.memo #memoMain {
   margin: 0 5vw;
-  padding: 0;
+}
+.memo summary {
+  text-align: left;
+  font-size: 20px;
+  color: var(--text-color);
+  border-bottom: 1px solid var(--text-color);
+  display: flex;
+  align-items: center;
+}
+
+.memo summary > span {
+  margin-left: auto;
 }
 .memo .memoItem {
-  width: 90vw;
+  display: flex;
+}
+.memo .memoText {
+  flex: 90%;
   margin: 2svh 0;
-  padding: 0.5em 0;
+  padding: 0.3em 0;
   color: var(--text-color);
   border: 1px solid var(--text-color);
   border-radius: 20px;
   box-shadow: 2px 2px var(--shadow-color);
 }
-.memo .memoItem.checked {
+.memo .memoText.checked {
   color: var(--background-color);
   background-color: var(--shadow-color);
+}
+.memo .memoItem span {
+  height: 9vw;
+  margin: 2svh 0;
+  flex: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-color);
+  border: 1px solid var(--text-color);
+  border-radius: 100%;
 }
 /*setting*/
 .setting {

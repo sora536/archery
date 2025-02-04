@@ -32,13 +32,6 @@ day =
   new Date().getDate() +
   "日";
 
-//memoの削除をsettingで
-var memoContent = [];
-//localstorageの取得
-if (localStorage.getItem("memoContent")) {
-  memoContent = JSON.parse(localStorage.getItem("memoContent"));
-  makeMemo(memoContent);
-}
 var score = [[]];
 //localstorageのスコアの内容を取る
 if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
@@ -462,48 +455,124 @@ function changeDateInput(date) {
 
 //memo
 
-function makeMemo(content) {
-  if (content !== null) {
-    for (let i = 0; i < content.length; i++) {
+//memoの削除をsettingで
+var memoContent = [];
+//localstorageの取得
+if (localStorage.getItem("memoContent")) {
+  memoContent = JSON.parse(localStorage.getItem("memoContent"));
+  makeMemo();
+}
+
+function makeMemo() {
+  document.getElementById("memoMain").innerHTML = "";
+  for (let j = 0; j < memoContent.length; j++) {
+    var clone = memoFolderTemplate.content.cloneNode(true);
+    document.getElementById("memoMain").appendChild(clone);
+    document.getElementById("memoFolder").setAttribute("id", "memoFolder" + j);
+    document.getElementById("memoInput").setAttribute("id", "memoInput" + j);
+    document.getElementById("memoList").setAttribute("id", "memoList" + j);
+    document.getElementById("memoTitle").textContent = memoContent[j][0];
+    span = document.createElement("span");
+    span.classList.add("material-icons");
+    span.setAttribute("id", "memoFolderDelete" + j);
+    span.setAttribute("onclick", "memoFolderDeleteClick(this)");
+    span.textContent = "delete";
+    document.getElementById("memoTitle").append(span);
+    document.getElementById("memoTitle").setAttribute("id", "");
+
+    for (let i = 1; i < memoContent[j].length; i++) {
+      div = document.createElement("div");
+      div.classList.add("memoItem");
+      document.getElementById("memoList" + j).append(div);
       p = document.createElement("p");
-      if (content[i][1]) {
-        p.classList.add("checked");
-      }
-      p.classList.add("memoItem");
-      p.setAttribute("onclick", "memoItemClick(this)");
-      p.setAttribute("id", "memo-" + i);
-      p.textContent = content[i][0];
-      memoList.prepend(p);
+      p.className = memoContent[j][i][1] ? "memoText checked" : "memoText";
+      p.setAttribute("id", "memoText" + j + "-" + i);
+      p.setAttribute("onclick", "memoTextClick(this)");
+      p.textContent = memoContent[j][i][0];
+      div.append(p);
+
+      span = document.createElement("span");
+      span.classList.add("material-icons");
+      span.setAttribute("id", "memoItemDelete" + j + "-" + i);
+      span.setAttribute("onclick", "memoDeleteClick(this)");
+      span.textContent = "delete";
+      div.append(span);
     }
+  }
+}
+function memoDeleteClick(item) {
+  if (window.confirm("消したくなることを書いたってコト?")) {
+    console.log(item.id);
+    let num = item.id.substring(14).split("-").map(Number);
+    memoContent[num[0]].splice(num[1], 1);
+    localStorage.setItem("memoContent", JSON.stringify(memoContent));
+    makeMemo();
+  }
+}
+function memoFolderDeleteClick(item) {
+  if (window.confirm("ほんとに消えるが？")) {
+    console.log(item.id);
+    let num = item.id.substring(16);
+    memoContent.splice(num, 1);
+    localStorage.setItem("memoContent", JSON.stringify(memoContent));
+    makeMemo();
+  }
+}
+function addNewFolder() {
+  folderName = prompt("Folderの名前を入力してください");
+  if (folderName) {
+    memoContent.push([folderName]);
+    localStorage.setItem("memoContent", JSON.stringify(memoContent));
+    makeMemo();
   }
 }
 //memoの追加
-function memoClick(memoInput) {
+function memoClick(memoInput, memoId) {
   event.preventDefault();
-  if (memoContent == null) {
-    memoContent = [];
-  }
-  memoContent.push([memoInput, false]);
-  localStorage.setItem("memoContent", JSON.stringify(memoContent));
+  console.log(memoInput);
+  var id = memoId.substring(9);
+  memoContent[id].push([memoInput, false]);
+
+  div = document.createElement("div");
+  div.classList.add("memoItem");
+  document.getElementById("memoList" + id).append(div);
+
   p = document.createElement("p");
-  p.classList.add("memoItem");
-  p.setAttribute("id", "memo-" + Number(memoContent.length - 1));
-  p.setAttribute("onclick", "memoItemClick(this)");
+  p.className = "memoText";
+  p.setAttribute(
+    "id",
+    "memoText" + id + "-" + Number(memoContent[id].length - 1)
+  );
+  p.setAttribute("onclick", "memoTextClick(this)");
   p.textContent = memoInput;
-  memoList.prepend(p);
-  document.getElementById("memoInput").value = "";
+  div.append(p);
+  span = document.createElement("span");
+  span.classList.add("material-icons");
+  span.setAttribute(
+    "id",
+    "memoItemDelete" + id + "-" + Number(memoContent[id].length - 1)
+  );
+  span.setAttribute("onclick", "memoDeleteClick(this)");
+  span.textContent = "delete";
+  div.append(span);
+
+  document.getElementById("memoInput" + id).value = "";
+  localStorage.setItem("memoContent", JSON.stringify(memoContent));
 }
 //表示,非表示の切り替え
-function memoItemClick(item) {
+function memoTextClick(item) {
   event.preventDefault();
   item.classList.toggle("checked");
-  for (let i = 0; i < memoContent.length; i++) {
-    if (memoContent[i][0] == item.textContent) {
-      memoContent[i][1] = !memoContent[i][1];
-      localStorage.setItem("memoContent", JSON.stringify(memoContent));
+  for (let j = 0; j < memoContent.length; j++) {
+    for (let i = 1; i < memoContent[j].length; i++) {
+      if (item === document.getElementById("memoText" + j + "-" + i)) {
+        memoContent[j][i][1] = !memoContent[j][i][1];
+        localStorage.setItem("memoContent", JSON.stringify(memoContent));
+      }
     }
   }
 }
+
 //setting
 function changeTheme(theme) {
   document.getElementById("html").className = theme;
@@ -527,32 +596,8 @@ function settingDataAllRemove() {
 }
 function memoCheckedRemove() {
   if (window.confirm("消したくなることを書いたってコト?")) {
-    if (!window.confirm("続きの話をskipしますか")) {
-      alert("'◯◯ってコト?'が最近ちいかわとやらに勘違いされる。");
-      alert("誠に遺憾です。(by 知り合いのミオファ)");
-      alert("私もとても由々しき事態と認識しております");
-      alert("'◯◯って...コト?'と'◯◯ってコト?'");
-      alert("この大きな違いにすら気づいていないとは");
-      alert("日々の生活の中でしつかりと構文を理解、");
-      alert("読解ができていないのでは無いかと心配になります");
-      alert("この溜めの有無によってホロリスなのか");
-      alert("それともちいかわファンなのか");
-      alert("次の会話において組み込む語録が大きく変わっていきます");
-      alert("日常に溢れている身内ネタにレーダーを張り");
-      alert("同じ趣味の同士を見つけましょう");
-      alert("ノー筋肉！ノーライフ！");
-    }
-    memoContent = JSON.parse(localStorage.getItem("memoContent"));
-
-    for (let i = 0; i < memoContent.length; i++) {
-      document.getElementById("memo-" + i).remove();
-      if (memoContent[i][1]) {
-        memoContent.splice(i, 1);
-        i -= 1;
-      }
-    }
-    localStorage.setItem("memoContent", JSON.stringify(memoContent));
-    makeMemo(memoContent);
+    localStorage.removeItem("memoContent");
+    window.location.reload();
   }
 }
 function settingShowLocalstorage() {
