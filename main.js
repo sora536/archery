@@ -38,7 +38,10 @@ if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
   score = JSON.parse(localStorage.getItem("score"));
   //不要な日付を削除
   for (let i = 1; i < score.length; i++) {
-    if (
+    if ((score[i].length = 1)) {
+      score.splice(i, 1);
+      i -= 1;
+    } else if (
       score[i][1].length +
         score[i][2].length +
         score[i][3].length +
@@ -50,6 +53,7 @@ if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
       score.splice(i, 1);
       i -= 1;
     }
+
     saveScore();
   }
 } else {
