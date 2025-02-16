@@ -483,6 +483,7 @@ html.Kazama {
   color: var(--text-color);
   border: 1px solid var(--text-color);
   border-radius: 100%;
+  font-size: 20px;
 }
 /*setting*/
 .setting {

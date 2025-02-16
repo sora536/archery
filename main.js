@@ -477,7 +477,7 @@ function makeMemo() {
     document.getElementById("memoList").setAttribute("id", "memoList" + j);
     document.getElementById("memoTitle").textContent = memoContent[j][0];
     span = document.createElement("span");
-    span.classList.add("material-icons");
+    span.classList.add("material-symbols-outlined");
     span.setAttribute("id", "memoFolderDelete" + j);
     span.setAttribute("onclick", "memoFolderDeleteClick(this)");
     span.textContent = "delete";
@@ -496,7 +496,7 @@ function makeMemo() {
       div.append(p);
 
       span = document.createElement("span");
-      span.classList.add("material-icons");
+      span.classList.add("material-symbols-outlined");
       span.setAttribute("id", "memoItemDelete" + j + "-" + i);
       span.setAttribute("onclick", "memoDeleteClick(this)");
       span.textContent = "delete";
@@ -551,7 +551,7 @@ function memoClick(memoInput, memoId) {
   p.textContent = memoInput;
   div.append(p);
   span = document.createElement("span");
-  span.classList.add("material-icons");
+  span.classList.add("material-symbols-outlined");
   span.setAttribute(
     "id",
     "memoItemDelete" + id + "-" + Number(memoContent[id].length - 1)
