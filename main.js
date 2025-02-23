@@ -79,6 +79,9 @@ if (localStorage.getItem("distance")) {
   localStorage.setItem("distance", '"70m"');
   document.getElementById("70m").checked = true;
 }
+if (!localStorage.getItem("goal")) {
+  localStorage.setItem("goal", "250");
+}
 
 setScoreTable("home", 36, 0);
 
@@ -197,17 +200,24 @@ function makeScoreTable(day) {
 function makeGoodScoreTable(day) {
   data = [[], [], [], [], []];
   for (let j = 1; j < 6; j++) {
+    //distanceの設定(70m,50m,...etc)
     if (j == 1) {
       distance = "70m";
+      goal = JSON.parse(localStorage.getItem("goal"));
     } else if (j == 2) {
       distance = "50m";
+      goal = 200;
     } else if (j == 3) {
       distance = "30m";
+      goal = 300;
     } else if (j == 4) {
       distance = "18m";
+      goal = 320;
     } else if (j == 5) {
       distance = "10m";
+      goal = 350;
     }
+    //dataの作成(dataは素点)
     for (let i = 0; i < score[day][j].length / 6; i++) {
       num = 0;
       for (let h = 0; h < 6; h++) {
@@ -287,7 +297,74 @@ function makeGoodScoreTable(day) {
 
       row.setAttribute("id", "");
     }
+    //アナリティクス的さむしんぐ
+    anaData = [];
+    for (let i = 0; i < score[day][j].length; i++) {
+      if (score[day][j][i] == "X") {
+        anaData.push(10);
+      } else if (score[day][j][i] == "M") {
+        anaData.push(0);
+      } else if (score[day][j][i] == "" || score[day][j][i] == undefined) {
+      } else {
+        anaData.push(Number(score[day][j][i]));
+      }
+    }
+    if (anaData.length !== 0) {
+      average =
+        anaData.reduce((previous, current) => previous + current) /
+        anaData.length;
+    } else {
+      average = NaN;
+    }
+    if (anaData.length !== 0) {
+      sd = Math.sqrt(
+        anaData
+          .map((current) => {
+            const difference = current - average;
+            return difference ** 2;
+          })
+          .reduce((previous, current) => previous + current) / anaData.length
+      );
+    } else {
+      sd = NaN;
+    }
+    probability = rightTailProbability((goal / 36 - average) / sd);
+
+    p = document.createElement("p");
+    p.textContent = "average:" + (average * 36).toFixed(2);
+    scoreTable.appendChild(p);
+
+    p = document.createElement("p");
+    p.textContent =
+      goal + "点を超える確率:" + (probability * 100).toFixed(2) + "%";
+    scoreTable.appendChild(p);
   }
+}
+//正規分布のやつ(AI作)
+function erf(x) {
+  // Abramowitz and Stegun approximation
+  const a1 = 0.254829592;
+  const a2 = -0.284496736;
+  const a3 = 1.421413741;
+  const a4 = -1.453152027;
+  const a5 = 1.061405429;
+  const p = 0.3275911;
+
+  const sign = x < 0 ? -1 : 1;
+  x = Math.abs(x);
+  const t = 1.0 / (1.0 + p * x);
+  const y =
+    1.0 - ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+
+  return sign * y;
+}
+
+function normalCDF(z) {
+  return (1 + erf(z / Math.sqrt(2))) / 2;
+}
+
+function rightTailProbability(z) {
+  return 1 - normalCDF(z);
 }
 //新しいテーブルの用意
 function newTableClick() {
@@ -608,6 +685,10 @@ function settingShowLocalstorage() {
   alert(JSON.parse(localStorage.getItem("memoContent")));
   alert(JSON.parse(localStorage.getItem("distance")));
   alert(JSON.parse(localStorage.getItem("score")));
+}
+function changeGoal() {
+  goal = prompt("目標点数を入力してください(半角数字のみ)");
+  localStorage.setItem("goal", goal);
 }
 
 //serviceWorker
