@@ -38,7 +38,7 @@ if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
   score = JSON.parse(localStorage.getItem("score"));
   //不要な日付を削除
   for (let i = 1; i < score.length; i++) {
-    if ((score[i].length = 1)) {
+    if (score[i].length == 1) {
       score.splice(i, 1);
       i -= 1;
     } else if (
@@ -46,14 +46,12 @@ if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
         score[i][2].length +
         score[i][3].length +
         score[i][4].length +
-        score[i][5].length +
-        score[i][6].length ==
+        score[i][5].length ==
       0
     ) {
       score.splice(i, 1);
       i -= 1;
     }
-
     saveScore();
   }
 } else {
@@ -309,6 +307,7 @@ function makeGoodScoreTable(day) {
         anaData.push(Number(score[day][j][i]));
       }
     }
+
     if (anaData.length !== 0) {
       average =
         anaData.reduce((previous, current) => previous + current) /
@@ -338,9 +337,18 @@ function makeGoodScoreTable(day) {
     p.textContent =
       goal + "点を超える確率:" + (probability * 100).toFixed(2) + "%";
     scoreTable.appendChild(p);
+
+    a = document.createElement("a");
+    a.setAttribute("target", "_blank");
+    a.setAttribute("rel", "nofollow noopener");
+    a.setAttribute(
+      "href",
+      "http://line.me/R/msg/text/?" + distance + sumAll + "%E7%82%B9"
+    );
+    a.textContent = "LINEに送る";
+    scoreTable.appendChild(a);
   }
 }
-//正規分布のやつ(AI作)
 function erf(x) {
   // Abramowitz and Stegun approximation
   const a1 = 0.254829592;
@@ -685,6 +693,8 @@ function settingShowLocalstorage() {
   alert(JSON.parse(localStorage.getItem("memoContent")));
   alert(JSON.parse(localStorage.getItem("distance")));
   alert(JSON.parse(localStorage.getItem("score")));
+  alert(JSON.parse(localStorage.getItem("goal")));
+  alert(JSON.parse(localStorage.getItem("theme")));
 }
 function changeGoal() {
   goal = prompt("目標点数を入力してください(半角数字のみ)");
