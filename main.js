@@ -374,7 +374,10 @@ function makeGoodScoreTable(day) {
     a.setAttribute("rel", "nofollow noopener");
     a.setAttribute(
       "href",
-      "http://line.me/R/msg/text/?" + distance + sumAll + "%E7%82%B9"
+      "http://line.me/R/msg/text/?" +
+        distance +
+        sumAll +
+        "%E7%82%B9%E3%81%A7%E3%81%97%E3%81%9F"
     );
     a.textContent = "LINEに送る";
     scoreTable.appendChild(a);
