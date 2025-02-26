@@ -80,6 +80,9 @@ if (localStorage.getItem("distance")) {
 if (!localStorage.getItem("goal")) {
   localStorage.setItem("goal", "250");
 }
+if (!localStorage.getItem("goodScoreRound")) {
+  localStorage.setItem("goodScoreRound", 1);
+}
 
 setScoreTable("home", 36, 0);
 
@@ -215,7 +218,7 @@ function makeGoodScoreTable(day) {
       distance = "10m";
       goal = 350;
     }
-    //dataの作成(dataは素点)
+    //dataの作成(dataは小計)
     for (let i = 0; i < score[day][j].length / 6; i++) {
       num = 0;
       for (let h = 0; h < 6; h++) {
@@ -233,68 +236,96 @@ function makeGoodScoreTable(day) {
       }
       data[j - 1].push(num);
     }
-    max = 0;
-    for (let i = 0; i < data[j - 1].length - 5; i++) {
-      data[j - 1][i] = Number(
-        data[j - 1][i] +
-          data[j - 1][i + 1] +
-          data[j - 1][i + 2] +
-          data[j - 1][i + 3] +
-          data[j - 1][i + 4] +
-          data[j - 1][i + 5]
-      );
+    console.log(data[j - 1]);
+    for (
+      let i = 0;
+      i <=
+      data[j - 1].length - 6 * Number(localStorage.getItem("goodScoreRound"));
+      i++
+    ) {
+      max = 0;
+      for (
+        let k = 0;
+        k < 6 * Number(localStorage.getItem("goodScoreRound"));
+        k++
+      ) {
+        max += data[j - 1][i + k];
+      }
+      data[j - 1][i] = max;
     }
-    for (let i = 0; i < 5; i++) {
+
+    for (
+      let i = 1;
+      i < 6 * Number(localStorage.getItem("goodScoreRound"));
+      i++
+    ) {
       data[j - 1].pop();
     }
+    console.log(data[j - 1]);
+    max = 0;
     for (let i = 0; i < data[j - 1].length; i++) {
       if (!isNaN(data[j - 1][i])) {
         max = Math.max(data[j - 1][i], max);
       }
     }
+    console.log(max);
+
     num = data[j - 1].indexOf(max) * 6;
-    data[j - 1] = score[day][j].slice(num, num + 36);
+    data[j - 1] = score[day][j].slice(
+      num,
+      num + 36 * Number(localStorage.getItem("goodScoreRound"))
+    );
+    console.log(data[j - 1]);
 
     document.getElementById(distance + "-goodScoreTable").innerHTML = "";
-    scoreTable = document.getElementById(distance + "-goodScoreTable");
-    var clone = scoreTableTemplate.content.cloneNode(true);
-    scoreTable.appendChild(clone);
-    document.getElementById("scoreInfo").textContent = distance + "-goodScore";
-    document.getElementById("scoreInfo").setAttribute("id", "");
-
     sumAll = 0;
-    for (let end = 0; end < 6; end++) {
-      sum = 0;
-      row = document.getElementById("row-" + Number(end + 1));
-      for (let i = 0; i < 6; i++) {
-        td = document.createElement("td");
-        td.textContent = data[j - 1][6 * end + i];
-        row.appendChild(td);
-        if (data[j - 1][6 * end + i] == "X") {
-          sum += 10;
-          sumAll += 10;
-        } else if (data[j - 1][6 * end + i] == "M") {
-        } else {
-          sum += Number(data[j - 1][6 * end + i]);
-          sumAll += Number(data[j - 1][6 * end + i]);
+
+    for (
+      let round = 1;
+      round <= Number(localStorage.getItem("goodScoreRound"));
+      round++
+    ) {
+      scoreTable = document.getElementById(distance + "-goodScoreTable");
+      var clone = scoreTableTemplate.content.cloneNode(true);
+      scoreTable.appendChild(clone);
+      document.getElementById("scoreInfo").textContent =
+        distance + "-goodScore-" + round;
+      document.getElementById("scoreInfo").setAttribute("id", "");
+
+      for (let end = 0; end < 6; end++) {
+        sum = 0;
+        row = document.getElementById("row-" + Number(end + 1));
+        for (let i = 0; i < 6; i++) {
+          td = document.createElement("td");
+          td.textContent = data[j - 1][6 * end + i + 36 * (round - 1)];
+          row.appendChild(td);
+          if (data[j - 1][6 * end + i + 36 * (round - 1)] == "X") {
+            sum += 10;
+            sumAll += 10;
+          } else if (data[j - 1][6 * end + i + 36 * (round - 1)] == "M") {
+          } else {
+            sum += Number(data[j - 1][6 * end + i + 36 * (round - 1)]);
+            sumAll += Number(data[j - 1][6 * end + i + 36 * (round - 1)]);
+          }
         }
-      }
-      if (isNaN(sum)) {
-        sum = "";
-        sumAll = "";
-      }
-      td = document.createElement("td");
-      td.classList.add("scoreSum");
-      td.textContent = sum;
-      row.appendChild(td);
+        if (isNaN(sum)) {
+          sum = "";
+          sumAll = "";
+        }
+        td = document.createElement("td");
+        td.classList.add("scoreSum");
+        td.textContent = sum;
+        row.appendChild(td);
 
-      td = document.createElement("td");
-      td.classList.add("scoreSum");
-      td.textContent = sumAll;
-      row.appendChild(td);
+        td = document.createElement("td");
+        td.classList.add("scoreSum");
+        td.textContent = sumAll;
+        row.appendChild(td);
 
-      row.setAttribute("id", "");
+        row.setAttribute("id", "");
+      }
     }
+
     //アナリティクス的さむしんぐ
     anaData = [];
     for (let i = 0; i < score[day][j].length; i++) {
@@ -699,6 +730,10 @@ function settingShowLocalstorage() {
 function changeGoal() {
   goal = prompt("目標点数を入力してください(半角数字のみ)");
   localStorage.setItem("goal", goal);
+}
+function changeGoodScoreRound() {
+  goodScoreRound = prompt("何ラウンド分のいいとこ取りをするか(半角数字のみ)");
+  localStorage.setItem("goodScoreRound", goodScoreRound);
 }
 
 //serviceWorker
