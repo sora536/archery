@@ -236,7 +236,6 @@ function makeGoodScoreTable(day) {
       }
       data[j - 1].push(num);
     }
-    console.log(data[j - 1]);
     for (
       let i = 0;
       i <=
@@ -261,30 +260,27 @@ function makeGoodScoreTable(day) {
     ) {
       data[j - 1].pop();
     }
-    console.log(data[j - 1]);
     max = 0;
     for (let i = 0; i < data[j - 1].length; i++) {
       if (!isNaN(data[j - 1][i])) {
         max = Math.max(data[j - 1][i], max);
       }
     }
-    console.log(max);
 
     num = data[j - 1].indexOf(max) * 6;
     data[j - 1] = score[day][j].slice(
       num,
       num + 36 * Number(localStorage.getItem("goodScoreRound"))
     );
-    console.log(data[j - 1]);
 
     document.getElementById(distance + "-goodScoreTable").innerHTML = "";
-    sumAll = 0;
 
     for (
       let round = 1;
       round <= Number(localStorage.getItem("goodScoreRound"));
       round++
     ) {
+      sumAll = 0;
       scoreTable = document.getElementById(distance + "-goodScoreTable");
       var clone = scoreTableTemplate.content.cloneNode(true);
       scoreTable.appendChild(clone);
@@ -369,16 +365,32 @@ function makeGoodScoreTable(day) {
       goal + "点を超える確率:" + (probability * 100).toFixed(2) + "%";
     scoreTable.appendChild(p);
 
+    console.log(max);
     a = document.createElement("a");
     a.setAttribute("target", "_blank");
     a.setAttribute("rel", "nofollow noopener");
-    a.setAttribute(
-      "href",
-      "http://line.me/R/msg/text/?" +
-        distance +
-        sumAll +
-        "%E7%82%B9%E3%81%A7%E3%81%97%E3%81%9F"
-    );
+    if (localStorage.getItem("goodScoreRound") == 2) {
+      a.setAttribute(
+        "href",
+        "http://line.me/R/msg/text/?" +
+          distance +
+          "%0D%0A%E5%89%8D%E5%8D%8A" +
+          Number(max - sumAll) +
+          "%E7%82%B9%0D%0A%E5%BE%8C%E5%8D%8A" +
+          sumAll +
+          "%E7%82%B9%0D%0A%E5%90%88%E8%A8%88" +
+          max +
+          "%E7%82%B9%E3%81%A7%E3%81%97%E3%81%9F"
+      );
+    } else {
+      a.setAttribute(
+        "href",
+        "http://line.me/R/msg/text/?" +
+          distance +
+          sumAll +
+          "%E7%82%B9%E3%81%A7%E3%81%97%E3%81%9F"
+      );
+    }
     a.textContent = "LINEに送る";
     scoreTable.appendChild(a);
   }
