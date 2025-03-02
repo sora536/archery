@@ -85,6 +85,8 @@ if (!localStorage.getItem("goodScoreRound")) {
 }
 if(localStorage.getItem("title")){
   document.getElementById("title").textContent = localStorage.getItem("title")
+}else{
+  document.getElementById("title").textContent = ">Ianse◯的さむしんぐ"
 }
 imgLoad()
 setScoreTable("home", 36, 0);
