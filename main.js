@@ -83,6 +83,9 @@ if (!localStorage.getItem("goal")) {
 if (!localStorage.getItem("goodScoreRound")) {
   localStorage.setItem("goodScoreRound", 1);
 }
+if(localStorage.getItem("title")){
+  document.getElementById("title").textContent = localStorage.getItem("title")
+}
 imgLoad()
 setScoreTable("home", 36, 0);
 
@@ -750,6 +753,11 @@ function changeGoal() {
 function changeGoodScoreRound() {
   goodScoreRound = prompt("何ラウンド分のいいとこ取りをするか(半角数字のみ)");
   localStorage.setItem("goodScoreRound", goodScoreRound);
+}
+function changeTitle(){
+  title = prompt("タイトルを入力してください")
+  localStorage.setItem("title", title);
+  document.getElementById("title").textContent = title
 }
 function imgInput(){
   const file =document.getElementById("imgInput").files[0]
