@@ -745,6 +745,7 @@ function settingShowLocalstorage() {
   alert(JSON.parse(localStorage.getItem("distance")));
   alert(JSON.parse(localStorage.getItem("score")));
   alert(JSON.parse(localStorage.getItem("goal")));
+  alert(JSON.parse(localStorage.getItem("title")))
   alert(JSON.parse(localStorage.getItem("theme")));
   alert(JSON.parse(localStorage.getItem("img")));
 }
