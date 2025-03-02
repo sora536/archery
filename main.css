@@ -357,7 +357,7 @@ html.Kazama {
 
 .recordTab label:has(:checked) {
   background-color: transparent;
-  border-color: var(--main-color) var(--shadow-color) var(--background-color);
+  border-color: var(--main-color) var(--shadow-color) transparent;
   border-style: solid;
   border-width: 4px 1px 1px;
   border-radius: 5px;
@@ -444,7 +444,7 @@ html.Kazama {
   margin: 2svh 0 0 0;
   padding: 0.5em;
   font-size: 16px;
-  background-color: var(--background-color);
+  background-color: transparent;
   border: 1px solid var(--text-color);
   border-radius: 20px;
   box-shadow: 2px 2px var(--shadow-color);
