@@ -83,7 +83,7 @@ if (!localStorage.getItem("goal")) {
 if (!localStorage.getItem("goodScoreRound")) {
   localStorage.setItem("goodScoreRound", 1);
 }
-
+imgLoad()
 setScoreTable("home", 36, 0);
 
 //上の日付を更新
@@ -749,6 +749,25 @@ function changeGoal() {
 function changeGoodScoreRound() {
   goodScoreRound = prompt("何ラウンド分のいいとこ取りをするか(半角数字のみ)");
   localStorage.setItem("goodScoreRound", goodScoreRound);
+}
+function imgInput(){
+  const file =document.getElementById("imgInput").files[0]
+  if(file){
+  const reader = new FileReader()
+  reader.readAsDataURL(file)
+  reader.onload = function(){
+    localStorage.setItem("img",reader.result)
+
+  }}else{
+    localStorage.removeItem("img")
+  }
+window.location.reload()
+}
+function imgLoad(){
+  document.getElementById("home").style.backgroundImage = "url("+localStorage.getItem("img")+")"
+  document.getElementById("record").style.backgroundImage = "url("+localStorage.getItem("img")+")"
+  document.getElementById("memo").style.backgroundImage = "url("+localStorage.getItem("img")+")"
+  document.getElementById("setting").style.backgroundImage = "url("+localStorage.getItem("img")+")"
 }
 
 //serviceWorker
