@@ -741,6 +741,7 @@ function settingShowLocalstorage() {
   alert(JSON.parse(localStorage.getItem("score")));
   alert(JSON.parse(localStorage.getItem("goal")));
   alert(JSON.parse(localStorage.getItem("theme")));
+  alert(JSON.parse(localStorage.getItem("img")));
 }
 function changeGoal() {
   goal = prompt("目標点数を入力してください(半角数字のみ)");
@@ -757,17 +758,24 @@ function imgInput(){
   reader.readAsDataURL(file)
   reader.onload = function(){
     localStorage.setItem("img",reader.result)
-
   }}else{
     localStorage.removeItem("img")
   }
 window.location.reload()
 }
 function imgLoad(){
+  if(localStorage.getItem("img")){
   document.getElementById("home").style.backgroundImage = "url("+localStorage.getItem("img")+")"
   document.getElementById("record").style.backgroundImage = "url("+localStorage.getItem("img")+")"
   document.getElementById("memo").style.backgroundImage = "url("+localStorage.getItem("img")+")"
   document.getElementById("setting").style.backgroundImage = "url("+localStorage.getItem("img")+")"
+}else{
+  document.getElementById("home").style.backgroundImage = ""
+  document.getElementById("record").style.backgroundImage = ""  
+  document.getElementById("memo").style.backgroundImage = ""
+  document.getElementById("setting").style.backgroundImage = ""
+
+  }
 }
 
 //serviceWorker
