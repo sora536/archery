@@ -23,10 +23,12 @@ if (localStorage.getItem("theme")) {
     localStorage.getItem("theme")
   );
   document.getElementById("scoreButton").style.opacity=0.85
+  document.getElementById("body").style.backgroundSize = "auto 90svh"
 
   if(localStorage.getItem("theme") == '"Transparent"'){
-    console.log("a")
     document.getElementById("scoreButton").style.opacity=0.2
+    document.getElementById("body").style.backgroundSize = "cover"
+
   }
 }
 
@@ -723,6 +725,7 @@ function memoTextClick(item) {
 function changeTheme(theme) {
   document.getElementById("html").className = theme;
   localStorage.setItem("theme", JSON.stringify(theme));
+  window.location.reload();
 }
 
 //以下デバック用のボタン
