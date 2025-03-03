@@ -242,7 +242,6 @@ html.Transparent{
   border: 1px solid black;
   border-radius: 10px;
   box-shadow: 2px 2px var(--shadow-color);
-  opacity: 0.85;
 }
 .home .yellow {
   background-color: yellow;

@@ -22,6 +22,8 @@ if (localStorage.getItem("theme")) {
   document.getElementById("html").className = JSON.parse(
     localStorage.getItem("theme")
   );
+  document.getElementById("scoreButton").style.opacity=0.85
+
   if(localStorage.getItem("theme") == '"Transparent"'){
     console.log("a")
     document.getElementById("scoreButton").style.opacity=0.2
