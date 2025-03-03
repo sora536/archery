@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="main.css" />
     <link rel="manifest" href="manifest.json" />
   </head>
-  <body>
+  <body id="body">
     <header class="header">
       <h1 id="title"></h1>
     </header>
@@ -125,6 +125,7 @@
           </tr>
         </tbody>
       </table>
+      <div id="scoreButton">
       <button class="yellow" ontouchstart="scoreButtonClick(this)">X</button>
       <button class="yellow" ontouchstart="scoreButtonClick(this)">10</button>
       <button class="yellow" ontouchstart="scoreButtonClick(this)">9</button>
@@ -137,6 +138,7 @@
       <button class="white" ontouchstart="scoreButtonClick(this)">2</button>
       <button class="white" ontouchstart="scoreButtonClick(this)">1</button>
       <button class="gray" ontouchstart="scoreButtonClick(this)">M</button>
+    </div>
       <span class="material-icons scoreRemove" onclick="scoreRemove()"
         >backspace</span
       >
@@ -313,6 +315,7 @@
         <option value="">basic</option>
         <option value="Shigure">Shigure</option>
         <option value="Kazama">Kazama</option>
+        <option value="Transparent">Transparent</option>
       </select><br>
       <input type="file"id = "imgInput"/>
       <button onclick="imgInput()">更新</button>

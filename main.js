@@ -18,10 +18,14 @@ recordDate = document.getElementById("recordDate");
 recordDateInput = document.getElementById("recordDateInput");
 
 toggle = document.getElementById("toggle");
-if (localStorage.getItem("distance")) {
+if (localStorage.getItem("theme")) {
   document.getElementById("html").className = JSON.parse(
     localStorage.getItem("theme")
   );
+  if(localStorage.getItem("theme") == '"Transparent"'){
+    console.log("a")
+    document.getElementById("scoreButton").style.opacity=0.2
+  }
 }
 
 day =
@@ -776,11 +780,9 @@ window.location.reload()
 }
 function imgLoad(){
   if(localStorage.getItem("img")){
-  document.getElementById("home").style.backgroundImage = "url("+localStorage.getItem("img")+")"
-  document.getElementById("record").style.backgroundImage = "url("+localStorage.getItem("img")+")"
-  document.getElementById("memo").style.backgroundImage = "url("+localStorage.getItem("img")+")"
-  document.getElementById("setting").style.backgroundImage = "url("+localStorage.getItem("img")+")"
+  document.getElementById("body").style.backgroundImage = "url("+localStorage.getItem("img")+")"
 }else{
+  document.getElementById("body").style.backgroundImage = ""
   document.getElementById("home").style.backgroundImage = ""
   document.getElementById("record").style.backgroundImage = ""  
   document.getElementById("memo").style.backgroundImage = ""

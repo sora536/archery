@@ -7,6 +7,9 @@ body {
   margin: 0;
   padding: 0;
   text-align: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 p {
   color: var(--text-color);
@@ -30,6 +33,12 @@ html.Kazama {
   --text-color: #765513;
   --shadow-color: rgba(220, 161, 44, 0.1);
   --background-color: #fcf9f1;
+}
+html.Transparent{
+  --main-color: transparent;
+  --text-color: rgba(0,0, 0, 0.2);
+  --shadow-color: transparent;
+  --background-color: transparent;
 }
 /*黒くする*/
 #overlay {
