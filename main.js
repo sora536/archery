@@ -23,11 +23,9 @@ if (localStorage.getItem("theme")) {
     localStorage.getItem("theme")
   );
   document.getElementById("scoreButton").style.opacity=0.85
-  document.getElementById("body").style.backgroundSize = "auto 90svh"
 
   if(localStorage.getItem("theme") == '"Transparent"'){
     document.getElementById("scoreButton").style.opacity=0.2
-    document.getElementById("body").style.backgroundSize = "cover"
 
   }
 }
@@ -785,7 +783,14 @@ window.location.reload()
 }
 function imgLoad(){
   if(localStorage.getItem("img")){
-  document.getElementById("body").style.backgroundImage = "url("+localStorage.getItem("img")+")"
+    if(localStorage.getItem("theme") == '"Transparent"'){ 
+  document.getElementById("body").style.backgroundImage = "url("+localStorage.getItem("img")+")"}
+  else{
+    document.getElementById("home").style.backgroundImage = "url("+localStorage.getItem("img")+")"
+    document.getElementById("record").style.backgroundImage = "url("+localStorage.getItem("img")+")"
+    document.getElementById("memo").style.backgroundImage = "url("+localStorage.getItem("img")+")"
+    document.getElementById("setting").style.backgroundImage = "url("+localStorage.getItem("img")+")"
+  }
 }else{
   document.getElementById("body").style.backgroundImage = ""
   document.getElementById("home").style.backgroundImage = ""
