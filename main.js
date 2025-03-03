@@ -19,6 +19,9 @@ recordDateInput = document.getElementById("recordDateInput");
 
 toggle = document.getElementById("toggle");
 if (localStorage.getItem("theme")) {
+  document.getElementById("themeSelect").value = JSON.parse(
+    localStorage.getItem("theme")
+  );
   document.getElementById("html").className = JSON.parse(
     localStorage.getItem("theme")
   );
