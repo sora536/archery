@@ -34,6 +34,12 @@ html.Kazama {
   --shadow-color: rgba(220, 161, 44, 0.1);
   --background-color: #fcf9f1;
 }
+html.Ao {
+  --main-color: #27468B;
+  --text-color: #ffffff;
+  --shadow-color: rgba( 155 , 178 , 226, 0.1);
+  --background-color: #16264b;
+}
 html.Transparent{
   --main-color: transparent;
   --text-color: rgba(0,0, 0, 0.2);
