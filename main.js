@@ -467,6 +467,15 @@ function addTable() {
 //素点の入力
 function scoreButtonClick(num) {
   event.preventDefault();
+  if(day !=new Date().getFullYear() +
+  "年" +
+  (new Date().getMonth() + 1) +
+  "月" +
+  new Date().getDate() +
+  "日"){
+    alert("日付が変わるました。再起します")
+    window.location.reload()
+  }
   if (score[0][6].length == 36) {
     finalSelect.value = select.value;
     document.getElementById("overlay").style.display = "block";
