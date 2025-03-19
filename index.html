@@ -241,53 +241,67 @@
     <div id="memoMain"></div>
     </div>
     <div class="setting" id="setting">
-      <details class="questionList">
-        <summary>よくある質問</summary>
+      <details>
+        <summary>使い方</summary>
         <details>
-          <summary>距離の変更</summary>
-          homeの"合計"の下にあるやつで変更してね
+          <summary>home</summary>
+          <details>
+            <summary>new+</summary>
+            <p>新しいスコアシートを作成します。スコアが全て入っていないときにこのボタンを押すと連続なデータではなくなるため、いいとこ取り機能を用いた時にここをまたいでいいとこ取りが実装されることはありません</p>
+          </details>
+          <details>
+            <summary>スコアの入力</summary>
+            <p>Ianse◯とおなじです。</p>
+          </details>
+          <details>
+            <summary>スコアの削除</summary>
+            <p>バックスペースね。</p>
+          </details>
+          <details>
+            <summary>スコアの保存</summary>
+            <p>37射目のスコアを入力しようとすると許可の画面が立ち上がります</p>
+          </details>
+          <details>
+            <summary>距離の変更</summary>
+            <p>明らかにぽいとこでできます</p>
+          </details>
         </details>
         <details>
-          <summary>いいとこ取りしたい</summary>
-          スコアが書かれてるとこの右上のtoggleButtonで切り替えが可能
+          <summary>record</summary>
+          <details>
+            <summary>日付の変更</summary>
+            <p>日付を変更するとその日のデータが表示されます</p>
+          </details>
+          <details>
+            <summary>スコアの表示</summary>
+            <p>70m,50m,30m,18m,10mのデータが表示されます</p>
+          </details>
+          <details>
+            <summary>いいとこ取りの表示</summary>
+            <p>右上のボタンでできます</p>
+          </details>
         </details>
-        <details>
-          <summary>過去のスコアをみたい</summary>
-          スコアのとこのいかにもなところ過去のスコアが見れるよ
-        </details>
-        <details>
-          <summary>保存したスコアの変更がしたい</summary>
-          許せ。実装はできるけどなんせデザイン案がない。
-        </details>
-        <details>
-          <summary>1ラウンド終える前に距離を変更したい</summary>
-          homeの右上の"add+"のボタンを押すと新しいスコアテーブルを出せるよ。ただし、連続したデータでないといいとこ取りはされないので注意。
-        </details>
-        <details>
-          <summary>memoが追加できない</summary>
-          enterキーまたはそれに準ずるものを押して追加
-        </details>
-        <details>
-          <summary>memoの順番を入れ替えたい</summary>
-          残念。そんな機能はないよ。だって需要なくね。(デザインが思いつかない)
-        </details>
-        <details>
-          <summary>なんでこんなに低クオリティなの</summary>
-          HTML,CSS,JavaScriptを学んで初めての作品だから。処女作にしてはいい出来だよね(圧)
-        </details>
-        <details>
-          <summary>コードいじって改良したい</summary>
-          読めるもんなら読んでみろ。連絡くれれば権限あげるよ
-        </details>
-        <details>
-          <summary>セキュリティは?</summary>
-          保存してるデータに個人情報もクソもないから大丈夫だと思ってる。
-        </details>
-        <details>
-          <summary>確率の計算方法</summary>
-          スコアは正規分布に従うと仮定した。なんかいい方法あったら教えて
-        </details>
+          <details>
+            <summary>memo</summary>
+            <details>
+              <summary>新しいフォルダを作る</summary>
+              <p>新しいフォルダを作成します。フォルダの中にmemoを入れられます</p>
+          </details>
+          <details>
+            <summary>memoの作成</summary>
+            <p>フォルダを選択してmemoを作成します。エンターキーまたはそれに準ずるもので追加</p>
+          </details>
+          <details>
+            <summary>memoの削除</summary>
+            <p>削除したいmemoの横のバックスペースキーを押すと削除されます</p>
+          </details>
+          </details>
+          <details>
+            <summary>setting</summary>
+           <p>色々できます。デバック用のボタンは意味が理解できない人は押さないほうがいいかも。</p>
+          </details>
       </details>
+        
       <button onclick="changeGoal()">
         70m目標点を変更
       </button>
