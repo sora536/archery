@@ -215,6 +215,7 @@ html.Transparent{
   margin: 40svh 20vw;
   color: var(--text-color);
   border: 1px solid var(--text-color);
+  background-color: var(--background-color);
   border-radius: 10px;
   font-size: 10px;
   z-index: 11;
