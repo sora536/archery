@@ -6,20 +6,10 @@
     <meta name="description" content="'ホーム画面に追加'をして疑似的にアプリ化することを強く推奨します" />
     <meta http-equiv="content-language" content="ja">
     <meta name="google" content="notranslate">
-    
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Cache-Control" content="no-cache">
-    
-    <meta
-      name="viewport"
-      content="width=device-width,initial-scale=1.0,viewport-fit=cover"
-    />
+    <meta name="viewport"content="width=device-width,initial-scale=1.0,viewport-fit=cover"/>
     <link rel="icon" href="favicon.ico">
     <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    />
+    <link rel="stylesheet"href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=delete" />
     <link rel="stylesheet" href="main.css" />
     <link rel="manifest" href="manifest.json" />
@@ -195,7 +185,6 @@
           <div id="70m-goodScoreTable" style="display: none;">
           </div>
         </div>
-
         <label>
           <input type="radio" name="recordTab" id="50m" />
           50m
@@ -211,7 +200,6 @@
         <div class="scoreTableTab">
           <div id="30m-scoreTable"></div>
           <div id="30m-goodScoreTable" style="display: none;"></div>
-
         </div>
         <label>
           <input type="radio" name="recordTab" id="18m" />
@@ -220,7 +208,6 @@
         <div class="scoreTableTab">
           <div id="18m-scoreTable"></div>
           <div id="18m-goodScoreTable" style="display: none;"></div>
-
         </div>
         <label>
           <input type="radio" name="recordTab" id="10m" />
@@ -229,7 +216,6 @@
         <div class="scoreTableTab">
           <div id="10m-scoreTable"></div>
           <div id="10m-goodScoreTable" style="display: none;"></div>
-
         </div>
       </div>
     </div>
@@ -278,9 +264,13 @@
           </details>
           <details>
             <summary>いいとこ取りの表示</summary>
-            <p>右上のボタンでできます</p>
+            <p>右上のボタンでできます(設定で何ラウンド分かを変更可)</p>
           </details>
-        </details>
+          <details>
+            <summary>LINEで共有</summary>
+            <p>LINEでいいとこ取りのスコアを共有できます</p>
+          </details>
+        </details> 
           <details>
             <summary>memo</summary>
             <details>
@@ -293,18 +283,14 @@
           </details>
           <details>
             <summary>memoの削除</summary>
-            <p>削除したいmemoの横のバックスペースキーを押すと削除されます</p>
+            <p>削除したいmemoの横のゴミ箱マークを押すと削除されます</p>
           </details>
           </details>
           <details>
             <summary>setting</summary>
-           <p>色々できます。デバック用のボタンは意味が理解できない人は押さないほうがいいかも。</p>
+            <p>色々できます。デバック用のボタンは意味が理解できない人は押さないほうがいいかも。</p>
           </details>
-      </details>
-        
-      <button onclick="changeGoal()">
-        70m目標点を変更
-      </button>
+      </details>    
       <button onclick="changeGoodScoreRound()">
         いいとこ取りのround数を変更
       </button>
@@ -323,7 +309,7 @@
       <button onclick="settingShowLocalstorage()">
         デバック用(localstorageを表示)
       </button>
-      <p>デザイン案と機能を送ってくれたら実装するよ</p>
+      <p>連絡くれたら権限あげる</p>
       <label>theme:</label>
       <select onchange="changeTheme(this.value)" id="themeSelect">
         <option value="">basic</option>
@@ -334,30 +320,6 @@
       </select><br>
       <input type="file"id = "imgInput"/>
       <button onclick="imgInput()">更新</button>
-
-      <!--
-      <div class="settingContent">
-        <p>設定項目1</p>
-        <div class="toggleSwitch">
-          <input id="settingToggle1"type="checkbox" />
-          <label for="toggle" >
-        </div>
-      </div>
-      <div class="settingContent">
-        <p>設定項目2</p>
-        <div class="toggleSwitch">
-          <input id="settingToggle2"type="checkbox" />
-          <label for="toggle" >
-        </div>
-      </div>
-      <div class="settingContent">
-        <p>設定項目3</p>
-        <div class="toggleSwitch">
-          <input id="settingToggle3"type="checkbox" />
-          <label for="toggle" >
-        </div>
-      </div>
-    -->
     </div>
     <footer class="footer">
       <span
