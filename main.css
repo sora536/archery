@@ -142,7 +142,7 @@ html.Transparent{
   padding: 0;
   height: 1.5em;
   width: 9vw;
-  font-size: 1em;
+  font-size: 0.9em;
   border: solid 1px var(--text-color);
   border-radius: 5px;
   color: var(--text-color);
