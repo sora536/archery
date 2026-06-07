@@ -116,20 +116,20 @@
         </tbody>
       </table>
       <div id="scoreButton">
-      <button class="yellow" ontouchstart="scoreButtonClick(this)">X</button>
-      <button class="yellow" ontouchstart="scoreButtonClick(this)">10</button>
-      <button class="yellow" ontouchstart="scoreButtonClick(this)">9</button>
-      <button class="red" ontouchstart="scoreButtonClick(this)">8</button>
-      <button class="red" ontouchstart="scoreButtonClick(this)">7</button>
-      <button class="blue" ontouchstart="scoreButtonClick(this)">6</button>
-      <button class="blue" ontouchstart="scoreButtonClick(this)">5</button>
-      <button class="black" ontouchstart="scoreButtonClick(this)">4</button>
-      <button class="black" ontouchstart="scoreButtonClick(this)">3</button>
-      <button class="white" ontouchstart="scoreButtonClick(this)">2</button>
-      <button class="white" ontouchstart="scoreButtonClick(this)">1</button>
-      <button class="gray" ontouchstart="scoreButtonClick(this)">M</button>
+      <button class="yellow" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">X</button>
+      <button class="yellow" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">10</button>
+      <button class="yellow" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">9</button>
+      <button class="red" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">8</button>
+      <button class="red" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">7</button>
+      <button class="blue" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">6</button>
+      <button class="blue" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">5</button>
+      <button class="black" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">4</button>
+      <button class="black" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">3</button>
+      <button class="white" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">2</button>
+      <button class="white" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">1</button>
+      <button class="gray" onclick="scoreButtonClick(event,this)" ontouchstart="scoreButtonClick(event,this)">M</button>
     </div>
-      <span class="material-icons scoreRemove" onclick="scoreRemove()"
+      <span class="material-icons scoreRemove" onclick="scoreRemove(event)"
         >backspace</span
       >
       <div id="saveCheckWindow">
@@ -143,7 +143,7 @@
             <option value="18m">18m</option>
             <option value="10m">10m</option>
           </select>
-          <button onclick="saveCheckClick()">ok</button>
+          <button onclick="saveCheckClick(event)">ok</button>
         </div>
       </div>
       <div id="addTableWindow">
@@ -220,7 +220,7 @@
       </div>
     </div>
     <div class="memo" id="memo">
-      <p class="makeFolder"ontouchstart="addNewFolder()"><span
+      <p class="makeFolder" onclick="memoShowFolderDialog()" ontouchstart="memoShowFolderDialog()"><span
       class="material-icons"
       >create_new_folder</span
     >新しいフォルダを作る</p>
@@ -326,24 +326,28 @@
       <span
         class="material-icons open"
         id="homeButton"
+        onclick="footerClick(this,home)"
         ontouchstart="footerClick(this,home)"
         >home</span
       >
       <span
         class="material-icons"
         id="recordButton"
+        onclick="footerClick(this,record)"
         ontouchstart="footerClick(this,record)"
         >content_paste</span
       >
       <span
         class="material-icons"
         id="memoButton"
+        onclick="footerClick(this,memo)"
         ontouchstart="footerClick(this,memo)"
         >checklist</span
       >
       <span
         class="material-icons"
         id="settingButton"
+        onclick="footerClick(this,setting)"
         ontouchstart="footerClick(this,setting)"
         >settings</span
       >
@@ -391,7 +395,7 @@
     <template id="memoFolderTemplate">
       <details id="memoFolder">
         <summary id="memoTitle"></summary>
-        <form onsubmit="memoClick(this.firstElementChild.value,this.firstElementChild.id)">
+        <form onsubmit="memoClick(event, this.firstElementChild.value, this.firstElementChild.id)">
           <input
           id="memoInput"
           type="text"
@@ -403,7 +407,28 @@
       </details>
 
     </template>
-    <div id="overlay" ontouchstart="overlayClose()"></div>
+    <!-- メモ操作用カスタムダイアログ -->
+    <div id="memoConfirmDialog" class="memoDialog" style="display:none;">
+      <div class="memoDialogContent">
+        <p id="memoConfirmMessage"></p>
+        <div class="memoDialogButtons">
+          <button onclick="memoConfirmOk()" ontouchstart="memoConfirmOk()">削除</button>
+          <button onclick="memoConfirmCancel()" ontouchstart="memoConfirmCancel()">キャンセル</button>
+        </div>
+      </div>
+    </div>
+    <!-- 新規フォルダ作成ダイアログ -->
+    <div id="memoFolderDialog" class="memoDialog" style="display:none;">
+      <div class="memoDialogContent">
+        <p>フォルダ名を入力してください</p>
+        <input id="memoFolderInput" type="text" placeholder="フォルダ名" style="width:100%; padding:8px; margin-bottom:10px; border:1px solid #ccc; border-radius:4px;" />
+        <div class="memoDialogButtons">
+          <button onclick="memoFolderOk()" ontouchstart="memoFolderOk()">作成</button>
+          <button onclick="memoFolderCancel()" ontouchstart="memoFolderCancel()">キャンセル</button>
+        </div>
+      </div>
+    </div>
+    <div id="overlay" onclick="overlayClose()" ontouchstart="overlayClose()"></div>
     <script src="main.js"></script>
   </body>
 </html>

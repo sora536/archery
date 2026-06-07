@@ -1,110 +1,428 @@
-if(!localStorage.getItem("score")){
-  alert("HelloWorld!ようこそ新しい世界へ")
-  alert("これはアーチェリーのスコアを記録するためのwebアプリです。" )
-  alert("といっても自作のサイトのためあんまり高度なことはできませんが..." )
-  alert("基本的にスコアの記録、いいとこ取り、スコアをLINEで共有する" )
-  alert("これくらいしかできません。" )
-  alert("詳しい説明は下の歯車マークを押して見てください" )
-  alert("最後に'ホーム画面に追加'を押すとアプリっぽくなるのでやりましょう")
+const home = document.getElementById("home");
+const homeButton = document.getElementById("homeButton");
+const record = document.getElementById("record");
+const recordButton = document.getElementById("recordButton");
+const memo = document.getElementById("memo");
+const memoButton = document.getElementById("memoButton");
+const setting = document.getElementById("setting");
+const settingButton = document.getElementById("settingButton");
+const homeScoreInfo = document.getElementById("homeScoreInfo");
+const select = document.getElementById("select");
+const finalSelect = document.getElementById("finalSelect");
+const addTableSelect = document.getElementById("addTableSelect");
+const memoList = document.getElementById("memoList");
+const recordDate = document.getElementById("recordDate");
+const recordDateInput = document.getElementById("recordDateInput");
+const toggle = document.getElementById("toggle");
+const scoreButton = document.getElementById("scoreButton");
+const themeSelect = document.getElementById("themeSelect");
+const titleElement = document.getElementById("title");
+const htmlElement = document.getElementById("html");
+const scoreTableTemplate = document.getElementById("scoreTableTemplate");
+const memoFolderTemplate = document.getElementById("memoFolderTemplate");
+
+const DISTANCES = ["70m", "50m", "30m", "18m", "10m"];
+const HOME_DISTANCE = "home";
+const STORAGE_KEY = "archeryAppData";
+const DEFAULT_DISTANCE = "70m";
+const DEFAULT_GOALS = {
+  "70m": 0,
+  "50m": 200,
+  "30m": 300,
+  "18m": 320,
+  "10m": 350,
+};
+
+/**
+ * appData オブジェクト構造:
+ * {
+ *   score: [
+ *     {
+ *       date: "2026年6月7日",
+ *       scores: {
+ *         "70m": [10, 9, 8, ...],    // 各距離のスコア配列（6射単位）
+ *         "50m": [...],
+ *         "30m": [...],
+ *         "18m": [...],
+ *         "10m": [...],
+ *         home: [...]                 // 入力中のスコア
+ *       }
+ *     },
+ *     ...
+ *   ],
+ *   distance: "70m",                  // 現在選択中の距離
+ *   goodScoreRound: 1,                // いいとこどり用ラウンド数（1 = 36射, 2 = 72射）
+ *   title: "Ianse◯的さむしんぐ",      // アプリタイトル
+ *   theme: "",                        // テーマ名（""="basic", "Shigure"等）
+ *   memoContent: [                    // メモフォルダ構造
+ *     ["フォルダ名", ["メモ1", false], ["メモ2", true]],  // true=チェック済み
+ *     ...
+ *   ],
+ *   img: null,                        // 背景画像（Data URL）
+ *   goal: 0                           // 70m用のカスタムゴール
+ * }
+ */
+
+/**
+ * 新しいスコアエントリを作成
+ * @param {string} date - 日付文字列（"2026年6月7日" 形式）
+ * @returns {object} 空のスコアオブジェクト
+ */
+function createEmptyScoreEntry(date) {
+  return {
+    date,
+    scores: {
+      "70m": [],
+      "50m": [],
+      "30m": [],
+      "18m": [],
+      "10m": [],
+      home: [],
+    },
+  };
 }
 
-home = document.getElementById("home");
-homeButton = document.getElementById("homeButton");
-record = document.getElementById("record");
-recordButton = document.getElementById("recordButton");
-memo = document.getElementById("memo");
-memoButton = document.getElementById("memoButton");
-setting = document.getElementById("setting");
-settingButton = document.getElementById("settingButton");
-homeScoreInfo = document.getElementById("homeScoreInfo");
-select = document.getElementById("select");
-finalSelect = document.getElementById("finalSelect");
-addTableSelect = document.getElementById("addTableSelect");
-memoList = document.getElementById("memoList");
-recordDate = document.getElementById("recordDate");
-recordDateInput = document.getElementById("recordDateInput");
-toggle = document.getElementById("toggle");
-if (localStorage.getItem("theme")) {
-    document.getElementById("themeSelect").value = JSON.parse(localStorage.getItem("theme"));
-    document.getElementById("html").className = JSON.parse(localStorage.getItem("theme"));
-    document.getElementById("scoreButton").style.opacity=0.85
-    if(localStorage.getItem("theme") == '"Transparent"'){
-      document.getElementById("scoreButton").style.opacity=0.2
-    }
+function getDistanceIndex(distance) {
+  const index = DISTANCES.indexOf(distance);
+  return index === -1 ? null : index + 1;
 }
-day =new Date().getFullYear() +"年" +(new Date().getMonth() + 1) +"月" +new Date().getDate() +"日";
-var score = [[]];
-//localstorageのスコアの内容を取る
-if (localStorage.getItem("score") && localStorage.getItem("score") !== "[]") {
-  score = JSON.parse(localStorage.getItem("score"));
-  //不要な日付を削除
-  for (let i = 1; i < score.length; i++) {
-    if (score[i][1].length +score[i][2].length +score[i][3].length +score[i][4].length +score[i][5].length ==0) {
-      score.splice(i, 1);
-      i -= 1;
-    }
-    saveScore();
+
+/**
+ * 指定日付・距離のスコア配列を取得（安全）
+ * @param {number} dayIndex - 日付インデックス（0 = 今日）
+ * @param {string} distance - 距離（"70m" など、または "home" = 入力中）
+ * @returns {array} スコア配列
+ */
+function getScoreColumn(dayIndex, distance) {
+  if (!score[dayIndex] || typeof score[dayIndex] !== "object") {
+    score[dayIndex] = createEmptyScoreEntry(day);
   }
-} else {//ないときは初期化
-  score = [[day, [], [], [], [], [], []]];
-  saveScore();
+  const dayEntry = score[dayIndex];
+  if (distance === HOME_DISTANCE) {
+    return Array.isArray(dayEntry.scores?.home) ? dayEntry.scores.home : [];
+  }
+  return Array.isArray(dayEntry.scores?.[distance]) ? dayEntry.scores[distance] : [];
 }
-//ログボ
-if (score[0][0] !== day) {
-  score.unshift([day, [], [], [], [], [], []]);
-  saveScore();
+
+/**
+ * 指定日付・距離のスコア配列を設定（安全）
+ * @param {number} dayIndex - 日付インデックス
+ * @param {string} distance - 距離（"70m" など、または "home"）
+ * @param {array} values - 新しいスコア配列
+ */
+function setScoreColumn(dayIndex, distance, values) {
+  if (!score[dayIndex] || typeof score[dayIndex] !== "object") {
+    score[dayIndex] = createEmptyScoreEntry(day);
+  }
+  if (!score[dayIndex].scores || typeof score[dayIndex].scores !== "object") {
+    score[dayIndex].scores = createEmptyScoreEntry(day).scores;
+  }
+  if (distance === HOME_DISTANCE) {
+    score[dayIndex].scores.home = values;
+    return;
+  }
+  if (DISTANCES.includes(distance)) {
+    score[dayIndex].scores[distance] = values;
+  }
 }
-//localstorageの距離の内容を取る
-if (localStorage.getItem("distance")) {
-  homeScoreInfo.textContent = JSON.parse(localStorage.getItem("distance"));
-  select.value = JSON.parse(localStorage.getItem("distance"));
-  document.getElementById(JSON.parse(localStorage.getItem("distance"))).checked = true;
-} else {
-  localStorage.setItem("distance", '"70m"');
-  document.getElementById("70m").checked = true;
+
+function getGoal(distance) {
+  if (distance === "70m") {
+    return appData.goal || DEFAULT_GOALS["70m"];
+  }
+  return DEFAULT_GOALS[distance] || 0;
 }
-if (!localStorage.getItem("goodScoreRound")) {
-  localStorage.setItem("goodScoreRound", 1);
+
+/**
+ * localStorage から JSON を安全に読み込み
+ * @param {string} key - ストレージキー
+ * @param {*} fallback - パース失敗時の代替値
+ * @returns {*} パース済みオブジェクト、または fallback
+ */
+function loadJSON(key, fallback) {
+  const raw = localStorage.getItem(key);
+  if (raw === null) {
+    return fallback;
+  }
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    console.warn(`localStorage ${key} parse failed:`, error);
+    return fallback;
+  }
 }
-if(localStorage.getItem("title")){
-  document.getElementById("title").textContent = localStorage.getItem("title")
-}else{
-  document.getElementById("title").textContent = "Ianse◯的さむしんぐ"
+
+function saveJSON(key, value) {
+  localStorage.setItem(key, JSON.stringify(value));
 }
-imgLoad()
+
+function normalizeScoreEntry(entry) {
+  if (Array.isArray(entry)) {
+    return {
+      date: String(entry[0] || day),
+      scores: {
+        "70m": Array.isArray(entry[1]) ? entry[1] : [],
+        "50m": Array.isArray(entry[2]) ? entry[2] : [],
+        "30m": Array.isArray(entry[3]) ? entry[3] : [],
+        "18m": Array.isArray(entry[4]) ? entry[4] : [],
+        "10m": Array.isArray(entry[5]) ? entry[5] : [],
+        home: Array.isArray(entry[6]) ? entry[6] : [],
+      },
+    };
+  }
+  if (entry && typeof entry === "object") {
+    return {
+      date: String(entry.date || day),
+      scores: {
+        "70m": Array.isArray(entry.scores?.["70m"]) ? entry.scores["70m"] : [],
+        "50m": Array.isArray(entry.scores?.["50m"]) ? entry.scores["50m"] : [],
+        "30m": Array.isArray(entry.scores?.["30m"]) ? entry.scores["30m"] : [],
+        "18m": Array.isArray(entry.scores?.["18m"]) ? entry.scores["18m"] : [],
+        "10m": Array.isArray(entry.scores?.["10m"]) ? entry.scores["10m"] : [],
+        home: Array.isArray(entry.scores?.home) ? entry.scores.home : [],
+      },
+    };
+  }
+  return createEmptyScoreEntry(day);
+}
+
+function createDefaultAppData() {
+  return {
+    score: [createEmptyScoreEntry(day)],
+    distance: DEFAULT_DISTANCE,
+    goodScoreRound: 1,
+    title: "Ianse◯的さむしんぐ",
+    theme: "",
+    memoContent: [],
+    img: null,
+    goal: 0,
+  };
+}
+
+function migrateLegacyData() {
+  const legacyScore = loadJSON("score", null);
+  const legacyDistance = loadJSON("distance", null);
+  const legacyRound = loadJSON("goodScoreRound", null);
+  const legacyTitle = loadJSON("title", null);
+  const legacyTheme = loadJSON("theme", null);
+  const legacyMemo = loadJSON("memoContent", null);
+  const legacyImg = loadJSON("img", null);
+  const legacyGoal = loadJSON("goal", null);
+
+  if (
+    legacyScore === null &&
+    legacyDistance === null &&
+    legacyRound === null &&
+    legacyTitle === null &&
+    legacyTheme === null &&
+    legacyMemo === null &&
+    legacyImg === null &&
+    legacyGoal === null
+  ) {
+    return null;
+  }
+
+  const migrated = {
+    score: Array.isArray(legacyScore) ? legacyScore.map(normalizeScoreEntry) : [createEmptyScoreEntry(day)],
+    distance: DISTANCES.includes(legacyDistance) ? legacyDistance : DEFAULT_DISTANCE,
+    goodScoreRound: Math.max(1, Number(legacyRound) || 1),
+    title: typeof legacyTitle === "string" ? legacyTitle : "Ianse◯的さむしんぐ",
+    theme: typeof legacyTheme === "string" ? legacyTheme : "",
+    memoContent: Array.isArray(legacyMemo) ? legacyMemo : [],
+    img: typeof legacyImg === "string" ? legacyImg : null,
+    goal: Number(legacyGoal) || 0,
+  };
+
+  ["score", "distance", "goodScoreRound", "title", "theme", "memoContent", "img", "goal"].forEach((key) => {
+    localStorage.removeItem(key);
+  });
+  saveJSON(STORAGE_KEY, migrated);
+  return migrated;
+}
+
+/**
+ * appData を正規化し、不正な値を補正
+ * @param {object} raw - 入力オブジェクト（可能性のある旧構造）
+ * @returns {object} 正規化済みの appData
+ */
+function normalizeAppData(raw) {
+  if (!raw || typeof raw !== "object") {
+    return createDefaultAppData();
+  }
+  const data = createDefaultAppData();
+  if (Array.isArray(raw.score) && raw.score.length > 0) {
+    data.score = raw.score.map(normalizeScoreEntry);
+  }
+  if (typeof raw.distance === "string" && DISTANCES.includes(raw.distance)) {
+    data.distance = raw.distance;
+  }
+  data.goodScoreRound = Math.max(1, Number(raw.goodScoreRound) || 1);
+  data.title = typeof raw.title === "string" && raw.title.length ? raw.title : data.title;
+  data.theme = typeof raw.theme === "string" ? raw.theme : data.theme;
+  data.memoContent = Array.isArray(raw.memoContent) ? raw.memoContent : data.memoContent;
+  data.img = typeof raw.img === "string" ? raw.img : data.img;
+  data.goal = Number(raw.goal) || data.goal;
+  return data;
+}
+
+/**
+ * appData を localStorage から読み込む
+ * 初回起動時に旧キーから新キーへ自動マイグレーション
+ * @returns {object} 正規化済みの appData
+ */
+function loadAppData() {
+  const legacy = migrateLegacyData();
+  if (legacy) {
+    return normalizeAppData(legacy);
+  }
+  const raw = loadJSON(STORAGE_KEY, null);
+  const normalized = normalizeAppData(raw);
+  if (raw && typeof raw === "object") {
+    saveJSON(STORAGE_KEY, normalized);
+  }
+  return normalized;
+}
+
+/**
+ * appData を localStorage に保存
+ * 変更時に常に実行して、旧データ構造を防止
+ */
+function saveAppData() {
+  saveJSON(STORAGE_KEY, appData);
+}
+
+/**
+ * 詳しい説明表示（初回使用時のみ）
+ */
+function showWelcomeIfNeeded() {
+  if (localStorage.getItem(STORAGE_KEY) === null) {
+    alert("HelloWorld!ようこそ新しい世界へ");
+    alert("これはアーチェリーのスコアを記録するためのwebアプリです。");
+    alert("といっても自作のサイトのためあんまり高度なことはできませんが...");
+    alert("基本的にスコアの記録、いいとこ取り、スコアをLINEで共有する");
+    alert("これくらいしかできません。");
+    alert("詳しい説明は下の歯車マークを押して見てください");
+    alert("最後に'ホーム画面に追加'を押すとアプリっぽくなるのでやりましょう");
+  }
+}
+
+function scoreEntryIsEmpty(entry) {
+  if (!entry || typeof entry !== "object" || !entry.scores || typeof entry.scores !== "object") {
+    return true;
+  }
+  return DISTANCES.every((distance) => Array.isArray(entry.scores[distance]) && entry.scores[distance].length === 0) &&
+    Array.isArray(entry.scores.home) && entry.scores.home.length === 0;
+}
+
+/**
+ * 誤入力から保護するユーティリティ
+ * @param {event} event - イベントオブジェクト（箇可）
+ */
+function safePreventDefault(event) {
+  if (event && typeof event.preventDefault === "function") {
+    event.preventDefault();
+  }
+}
+
+let day = new Date().getFullYear() + "年" + (new Date().getMonth() + 1) + "月" + new Date().getDate() + "日";
+let appData = loadAppData();
+showWelcomeIfNeeded();
+if (localStorage.getItem(STORAGE_KEY) === null) {
+  saveAppData();
+}
+let score = appData.score;
+let memoContent = appData.memoContent;
+
+if (score.length === 0) {
+  score = [createEmptyScoreEntry(day)];
+  appData.score = score;
+}
+if (score[0].date !== day) {
+  score.unshift(createEmptyScoreEntry(day));
+  appData.score = score;
+}
+if (!DISTANCES.includes(appData.distance)) {
+  appData.distance = DEFAULT_DISTANCE;
+}
+homeScoreInfo.textContent = appData.distance;
+select.value = appData.distance;
+if (document.getElementById(appData.distance)) {
+  document.getElementById(appData.distance).checked = true;
+}
+if (!appData.title) {
+  appData.title = "Ianse◯的さむしんぐ";
+}
+if (appData.title) {
+  document.getElementById("title").textContent = appData.title;
+}
+if (appData.theme) {
+  if (themeSelect) {
+    themeSelect.value = appData.theme;
+  }
+  if (htmlElement) {
+    htmlElement.className = appData.theme;
+  }
+  if (scoreButton) {
+    scoreButton.style.opacity = 0.85;
+    if (appData.theme === "Transparent") {
+      scoreButton.style.opacity = 0.2;
+    }
+  }
+}
+imgLoad();
 setScoreTable("home", 36, 0);
 //上の日付を更新
-recordDate.textContent = day;
+if (recordDate) {
+  recordDate.textContent = day;
+}
 //日付選択を生成
-for (let i = 0; i < score.length; i++) {
-  option = document.createElement("option");
-  option.textContent = score[i][0];
-  recordDateInput.appendChild(option);
-}
-toggle.addEventListener("click", function (e) {
-  for (let j = 1; j < 6; j++) {
-    if (j == 1) {
-      distance = "70m";
-    } else if (j == 2) {
-      distance = "50m";
-    } else if (j == 3) {
-      distance = "30m";
-    } else if (j == 4) {
-      distance = "18m";
-    } else if (j == 5) {
-      distance = "10m";
-    }
-    document.getElementById(distance + "-scoreTable").style.display = toggle.checked ? "none" : "block";
-    document.getElementById(distance + "-goodScoreTable").style.display = toggle.checked ? "block" : "none";
+if (recordDateInput) {
+  for (let i = 0; i < score.length; i++) {
+    const option = document.createElement("option");
+    option.textContent = score[i].date;
+    recordDateInput.appendChild(option);
   }
-});
-//スコアをlocalstorageに保存
-function saveScore() {
-  localStorage.setItem("score", JSON.stringify(score));
 }
+if (toggle) {
+  toggle.addEventListener("click", function () {
+    DISTANCES.forEach((distance) => {
+      const scoreTable = document.getElementById(distance + "-scoreTable");
+      const goodTable = document.getElementById(distance + "-goodScoreTable");
+      if (scoreTable) {
+        scoreTable.style.display = toggle.checked ? "none" : "block";
+      }
+      if (goodTable) {
+        goodTable.style.display = toggle.checked ? "block" : "none";
+      }
+    });
+  });
+}
+//スコアをlocalstorageに保存
+/**
+ * スコアを localStorage に保存
+ */
+function saveScore() {
+  appData.score = score;
+  saveAppData();
+}
+
+/**
+ * ラインを URL エンコードして LINE 共有用 URL を生成
+ * @param {string} text - 共有テキスト
+ * @returns {string} LINE 特有スキキム付き URL
+ */
+function createLineShareUrl(text) {
+  return "http://line.me/R/msg/text/?" + encodeURIComponent(text).replace(/%0A/g, "%0D%0A");
+}
+
 //フッターのクリック
+/**
+ * フッターナビゲーションクリック時（ページ上部のイラストを取り除け）
+ * @param {element} e - クリック対象
+ * @param {element} id - 詨ページ div
+ */
 function footerClick(e, id) {
-  event.preventDefault();
+  safePreventDefault(e);
   home.classList.remove("open");
   homeButton.classList.remove("open");
   record.classList.remove("open");
@@ -120,493 +438,726 @@ function footerClick(e, id) {
     makeGoodScoreTable(0);
     recordDateInput.value = day;
     recordDate.textContent = day;
-    document.getElementById(JSON.parse(localStorage.getItem("distance"))).checked = true;
+    if (document.getElementById(appData.distance)) {
+      document.getElementById(appData.distance).checked = true;
+    }
   }
 }
 //黒いやつのクリック
+/**
+ * ダイアログ・オーバーレイを閉じる
+ */
 function overlayClose() {
   document.getElementById("overlay").style.display = "none";
   document.getElementById("saveCheckWindow").style.display = "none";
   document.getElementById("addTableWindow").style.display = "none";
-  select.value = JSON.parse(localStorage.getItem("distance"));
+  select.value = appData.distance;
 }
 //recordのスコア氷を作る、ついで表示まで
+/**
+ * スコアテーブルを複数ラウンド分ごとに生成・表示
+ * @param {number} day - 日付インデックス
+ */
 function makeScoreTable(day) {
-  for (let j = 1; j < 6; j++) {
-    if (j == 1) {
-      distance = "70m";
-    } else if (j == 2) {
-      distance = "50m";
-    } else if (j == 3) {
-      distance = "30m";
-    } else if (j == 4) {
-      distance = "18m";
-    } else if (j == 5) {
-      distance = "10m";
+  if (!scoreTableTemplate) {
+    return;
+  }
+  DISTANCES.forEach((distance) => {
+    const scoreTable = document.getElementById(distance + "-scoreTable");
+    if (!scoreTable) {
+      return;
     }
-    document.getElementById(distance + "-scoreTable").innerHTML = "";
-    scoreTable = document.getElementById(distance + "-scoreTable");
-    for (let round = 0; round < score[day][j].length / 36; round++) {
-      var clone = scoreTableTemplate.content.cloneNode(true);
+    scoreTable.innerHTML = "";
+    const values = getScoreColumn(day, distance);
+    const rounds = Math.ceil(values.length / 36);
+    for (let round = 0; round < rounds; round++) {
+      const clone = scoreTableTemplate.content.cloneNode(true);
+      const scoreInfo = clone.querySelector("#scoreInfo");
+      if (scoreInfo) {
+        scoreInfo.textContent = `${distance}-${round + 1}`;
+        scoreInfo.removeAttribute("id");
+      }
       scoreTable.appendChild(clone);
-      document.getElementById("scoreInfo").textContent =distance + "-" + Number(round + 1);
-      document.getElementById("scoreInfo").setAttribute("id", "");
       for (let end = 0; end < 6; end++) {
-        row = document.getElementById("row-" + Number(end + 1));
+        const row = document.getElementById(`row-${end + 1}`);
+        if (!row) {
+          continue;
+        }
         for (let i = 0; i < 6; i++) {
-          td = document.createElement("td");
-          td.setAttribute("id",distance + "-" + Number(36 * round + 6 * end + i));
+          const td = document.createElement("td");
+          td.setAttribute("id", `${distance}-${36 * round + 6 * end + i}`);
           row.appendChild(td);
         }
-        td = document.createElement("td");
+        let td = document.createElement("td");
         td.classList.add("scoreSum");
-        td.setAttribute("id", distance + "Sum-" + Number(6 * round + end + 1));
+        td.setAttribute("id", `${distance}Sum-${6 * round + end + 1}`);
         row.appendChild(td);
         td = document.createElement("td");
         td.classList.add("scoreSum");
-        td.setAttribute("id", distance + "All-" + Number(6 * round + end + 1));
+        td.setAttribute("id", `${distance}All-${6 * round + end + 1}`);
         row.appendChild(td);
-        row.setAttribute("id", "");
+        row.removeAttribute("id");
       }
     }
-    setScoreTable(distance, score[day][j].length, day);
-  }
+    setScoreTable(distance, values.length, day);
+  });
 }
 
+/**
+ * いいとこどりテーブルを生成・表示
+ * 連続した指定ラウンド数の中で、合計スコアが最高の区間を抽出して表示
+ * @param {number} day - 日付インデックス（0 = 今日）
+ */
 function makeGoodScoreTable(day) {
-  data = [[], [], [], [], []];
-  for (let j = 1; j < 6; j++) {
-    //distanceの設定(70m,50m,...etc)
-    if (j == 1) {
-      distance = "70m";
-      goal = JSON.parse(localStorage.getItem("goal"));
-    } else if (j == 2) {
-      distance = "50m";
-      goal = 200;
-    } else if (j == 3) {
-      distance = "30m";
-      goal = 300;
-    } else if (j == 4) {
-      distance = "18m";
-      goal = 320;
-    } else if (j == 5) {
-      distance = "10m";
-      goal = 350;
-    }
-    //dataの作成(dataは小計)
-    for (let i = 0; i < score[day][j].length / 6; i++) {
-      num = 0;
+  const roundCount = Math.max(1, Number(appData.goodScoreRound) || 1);
+
+  DISTANCES.forEach((distance) => {
+    const values = getScoreColumn(day, distance);
+    
+    // 6射ごとのエンド単位でスコア合計を計算
+    const segmentValues = [];
+    for (let block = 0; block < values.length / 6; block++) {
+      let subtotal = 0;
       for (let h = 0; h < 6; h++) {
-        if (score[day][j][6 * i + h] == "X") {
-          num += 10;
-        } else if (score[day][j][6 * i + h] == "M") {
-        } else if (score[day][j][6 * i + h] == undefined ||score[day][j][6 * i + h] == "") {
-          num = NaN;
+        const item = values[6 * block + h];
+        if (item === "X") {
+          subtotal += 10;
+        } else if (item === "M") {
+          // M はカウントしない（0点）
+        } else if (item === undefined || item === "") {
+          subtotal = NaN;
+          break;
         } else {
-          num += Number(score[day][j][6 * i + h]);
+          subtotal += Number(item);
         }
       }
-      data[j - 1].push(num);
+      segmentValues.push(subtotal);
     }
-    for (let i = 0;i <=data[j - 1].length - 6 * Number(localStorage.getItem("goodScoreRound"));i++) {
-      max = 0;
-      for (let k = 0;k < 6 * Number(localStorage.getItem("goodScoreRound"));k++) {
-        max += data[j - 1][i + k];
+
+    // スライディングウィンドウで最高ラウンドを検索
+    // windowSize はエンド単位（1ラウンド = 6エンド）
+    const windowSize = 6 * roundCount;
+    const windowSums = [];
+    for (let i = 0; i <= segmentValues.length - windowSize; i++) {
+      let windowTotal = 0;
+      for (let k = 0; k < windowSize; k++) {
+        windowTotal += segmentValues[i + k];
       }
-      data[j - 1][i] = max;
+      windowSums.push(windowTotal);
     }
-    for (let i = 1;i < 6 * Number(localStorage.getItem("goodScoreRound"));i++) {
-      data[j - 1].pop();
-    }
-    max = 0;
-    for (let i = 0; i < data[j - 1].length; i++) {
-      if (!isNaN(data[j - 1][i])) {
-        max = Math.max(data[j - 1][i], max);
+
+    let max = Number.NEGATIVE_INFINITY;
+    windowSums.forEach((value) => {
+      if (!isNaN(value)) {
+        max = Math.max(max, value);
       }
+    });
+
+    // bestStart は射単位で計算（エンドインデックス × 6）
+    const bestStartSegmentIndex = windowSums.length > 0 && max !== Number.NEGATIVE_INFINITY
+      ? windowSums.indexOf(max)
+      : 0;
+    const bestStart = bestStartSegmentIndex * 6;
+    const bestSegment = values.slice(bestStart, bestStart + 36 * roundCount);
+
+    const scoreTable = document.getElementById(distance + "-goodScoreTable");
+    if (!scoreTable) {
+      return;
     }
-    num = data[j - 1].indexOf(max) * 6;
-    data[j - 1] = score[day][j].slice(num,num + 36 * Number(localStorage.getItem("goodScoreRound")));
-    document.getElementById(distance + "-goodScoreTable").innerHTML = "";
-    for (let round = 1;round <= Number(localStorage.getItem("goodScoreRound"));round++) {
-      sumAll = 0;
-      scoreTable = document.getElementById(distance + "-goodScoreTable");
-      var clone = scoreTableTemplate.content.cloneNode(true);
+    scoreTable.innerHTML = "";
+
+    const roundScores = [];
+    for (let round = 1; round <= roundCount; round++) {
+      let roundTotal = 0;
+      let roundSum = 0;
+      const clone = scoreTableTemplate.content.cloneNode(true);
+      const scoreInfo = clone.querySelector("#scoreInfo");
+      if (scoreInfo) {
+        scoreInfo.textContent = `${distance}-goodScore-${round}`;
+        scoreInfo.removeAttribute("id");
+      }
       scoreTable.appendChild(clone);
-      document.getElementById("scoreInfo").textContent =distance + "-goodScore-" + round;
-      document.getElementById("scoreInfo").setAttribute("id", "");
+
       for (let end = 0; end < 6; end++) {
-        sum = 0;
-        row = document.getElementById("row-" + Number(end + 1));
+        const row = document.getElementById(`row-${end + 1}`);
+        if (!row) {
+          continue;
+        }
+        let sum = 0;
         for (let i = 0; i < 6; i++) {
-          td = document.createElement("td");
-          td.textContent = data[j - 1][6 * end + i + 36 * (round - 1)];
+          const index = 6 * end + i + 36 * (round - 1);
+          const value = bestSegment[index];
+          const td = document.createElement("td");
+          td.textContent = value;
           row.appendChild(td);
-          if (data[j - 1][6 * end + i + 36 * (round - 1)] == "X") {
+          if (value === "X") {
             sum += 10;
-            sumAll += 10;
-          } else if (data[j - 1][6 * end + i + 36 * (round - 1)] == "M") {
-          } else {
-            sum += Number(data[j - 1][6 * end + i + 36 * (round - 1)]);
-            sumAll += Number(data[j - 1][6 * end + i + 36 * (round - 1)]);
+            roundTotal += 10;
+          } else if (value === "M") {
+          } else if (value !== undefined && value !== "") {
+            sum += Number(value);
+            roundTotal += Number(value);
           }
         }
-        if (isNaN(sum)) {
-          sum = "";
-          sumAll = "";
-        }
-        td = document.createElement("td");
-        td.classList.add("scoreSum");
-        td.textContent = sum;
-        row.appendChild(td);
-        td = document.createElement("td");
-        td.classList.add("scoreSum");
-        td.textContent = sumAll;
-        row.appendChild(td);
-        row.setAttribute("id", "");
+        const sumTd = document.createElement("td");
+        sumTd.classList.add("scoreSum");
+        sumTd.textContent = isNaN(sum) ? "" : sum;
+        row.appendChild(sumTd);
+        const allTd = document.createElement("td");
+        allTd.classList.add("scoreSum");
+        allTd.textContent = isNaN(roundTotal) ? "" : roundTotal;
+        row.appendChild(allTd);
+        row.removeAttribute("id");
       }
+      roundScores.push(roundTotal);
     }
-    anaData = [];
-    for (let i = 0; i < score[day][j].length; i++) {
-      if (score[day][j][i] == "X") {
-        anaData.push(10);
-      } else if (score[day][j][i] == "M") {
-        anaData.push(0);
-      } else if (score[day][j][i] == "" || score[day][j][i] == undefined) {
-      } else {
-        anaData.push(Number(score[day][j][i]));
-      }
-    }
-    if (anaData.length !== 0) {
-      average =anaData.reduce((previous, current) => previous + current) /anaData.length;
-    } else {
-      average = NaN;
-    }
-    p = document.createElement("p");
+
+    const validValues = values
+      .map((item) => (item === "X" ? 10 : item === "M" ? 0 : item === undefined || item === "" ? null : Number(item)))
+      .filter((value) => value !== null);
+    const average = validValues.length !== 0 ? validValues.reduce((acc, num) => acc + num, 0) / validValues.length : NaN;
+    const p = document.createElement("p");
     p.textContent = "average:" + (average * 36).toFixed(2);
     scoreTable.appendChild(p);
-    a = document.createElement("a");
+
+    const totalScore = roundScores.reduce((acc, num) => acc + num, 0);
+    const a = document.createElement("a");
     a.setAttribute("target", "_blank");
     a.setAttribute("rel", "nofollow noopener");
-    if (localStorage.getItem("goodScoreRound") == 2) {
-      a.setAttribute("href","http://line.me/R/msg/text/?" +distance +"%0D%0A%E5%89%8D%E5%8D%8A" +Number(max - sumAll) +"%E7%82%B9%0D%0A%E5%BE%8C%E5%8D%8A" +sumAll +"%E7%82%B9%0D%0A%E5%90%88%E8%A8%88" +max +"%E7%82%B9%E3%81%A7%E3%81%97%E3%81%9F"
-      );
+    if (roundCount === 2) {
+      a.setAttribute("href", createLineShareUrl(`${distance}\n前半${roundScores[0]}点\n後半${roundScores[1]}点\n合計${totalScore}点でした`));
     } else {
-      a.setAttribute("href","http://line.me/R/msg/text/?" +distance +sumAll +"%E7%82%B9%E3%81%A7%E3%81%97%E3%81%9F");
+      a.setAttribute("href", createLineShareUrl(`${distance}${totalScore}点でした`));
     }
     a.textContent = "LINEに送る";
     scoreTable.appendChild(a);
-  }
+  });
 }
 //新しいテーブルの用意
+/**
+ * 距離費が途中のスコアを新規シートか滝申しまじかダイアログを表示
+ */
 function newTableClick() {
-  if (score[0][6].length !== 0) {
+  if (getScoreColumn(0, HOME_DISTANCE).length !== 0) {
     addTableSelect.value = select.value;
     document.getElementById("overlay").style.display = "block";
     document.getElementById("addTableWindow").style.display = "block";
   }
 }
+
 //push
+/**
+ * 新規シートへの転送ダイアログを表示
+ */
 function addTable() {
-  num = score[0][6].length;
-  for (let i = 0; i < 36 - num; i++) {
-    score[0][6].push("");
+  const currentScores = getScoreColumn(0, HOME_DISTANCE);
+  while (currentScores.length < 36) {
+    currentScores.push("");
   }
-  if (addTableSelect.value == "70m") {
-    score[0][1] = score[0][1].concat(score[0][6]);
-  } else if (addTableSelect.value == "50m") {
-    score[0][2] = score[0][2].concat(score[0][6]);
-  } else if (addTableSelect.value == "30m") {
-    score[0][3] = score[0][3].concat(score[0][6]);
-  } else if (addTableSelect.value == "18m") {
-    score[0][4] = score[0][4].concat(score[0][6]);
-  } else if (addTableSelect.value == "10m") {
-    score[0][5] = score[0][5].concat(score[0][6]);
-  }
-  score[0][6] = [];
+  const targetDistance = addTableSelect.value;
+  setScoreColumn(0, targetDistance, getScoreColumn(0, targetDistance).concat(currentScores));
+  setScoreColumn(0, HOME_DISTANCE, []);
   saveScore();
   overlayClose();
-  setScoreTable("home", 36, 0);
+  setScoreTable(HOME_DISTANCE, 36, 0);
 }
+
 //素点の入力
-function scoreButtonClick(num) {
-  event.preventDefault();
-  if(day !=new Date().getFullYear() +"年" +(new Date().getMonth() + 1) +"月" +new Date().getDate() +"日"){
-    alert("日付が変わるました。再起します")
-    window.location.reload()
+/**
+ * スコアボタンクリック時のハンドラ
+ * 入力中の距離に射を追加、36射到達で距離選択ダイアログを表示
+ * @param {event} event - イベントオブジェクト
+ * @param {element} num - ボタン要素（textContent にスコア値）
+ */
+function scoreButtonClick(event, num) {
+  safePreventDefault(event);
+  if (day !== new Date().getFullYear() + "年" + (new Date().getMonth() + 1) + "月" + new Date().getDate() + "日") {
+    alert("日付が変わるました。再起します");
+    window.location.reload();
+    return;
   }
-  if (score[0][6].length == 36) {
+  const currentScores = getScoreColumn(0, HOME_DISTANCE);
+  if (currentScores.length === 36) {
     finalSelect.value = select.value;
     document.getElementById("overlay").style.display = "block";
     document.getElementById("saveCheckWindow").style.display = "block";
   } else {
-    score[0][6].push(num.textContent);
-    setScoreTable("home", score[0][6].length, 0);
+    currentScores.push(num.textContent);
+    setScoreTable(HOME_DISTANCE, currentScores.length, 0);
   }
   saveScore();
 }
+
 //素点の削除
-function scoreRemove() {
-  event.preventDefault();
-  score[0][6].pop();
-  setScoreTable("home", score[0][6].length + 1, 0);
+/**
+ * スコア削除（最後の射を戻す）
+ * @param {event} event - イベントオブジェクト
+ */
+function scoreRemove(event) {
+  safePreventDefault(event);
+  const currentScores = getScoreColumn(0, HOME_DISTANCE);
+  currentScores.pop();
+  setScoreTable(HOME_DISTANCE, currentScores.length + 1, 0);
   saveScore();
 }
+
 //最終確認のとき
-function saveCheckClick() {
-  event.preventDefault();
-  if (finalSelect.value == "70m") {
-    score[0][1] = score[0][1].concat(score[0][6]);
-  } else if (finalSelect.value == "50m") {
-    score[0][2] = score[0][2].concat(score[0][6]);
-  } else if (finalSelect.value == "30m") {
-    score[0][3] = score[0][3].concat(score[0][6]);
-  } else if (finalSelect.value == "18m") {
-    score[0][4] = score[0][4].concat(score[0][6]);
-  } else if (finalSelect.value == "10m") {
-    score[0][5] = score[0][5].concat(score[0][6]);
-  }
-  score[0][6] = [];
+/**
+ * スコア警告ダイアログを閉じてスコアを正式保存
+ * @param {event} event - イベントオブジェクト
+ */
+function saveCheckClick(event) {
+  safePreventDefault(event);
+  const targetDistance = finalSelect.value;
+  setScoreColumn(0, targetDistance, getScoreColumn(0, targetDistance).concat(getScoreColumn(0, HOME_DISTANCE)));
+  setScoreColumn(0, HOME_DISTANCE, []);
   saveScore();
   overlayClose();
-  setScoreTable("home", 36, 0);
+  setScoreTable(HOME_DISTANCE, 36, 0);
 }
+
 //距離が変わったとき
+/**
+ * 距離変更時のハンドラ
+ * 選択距離を appData に保存（不正値を無視）
+ * @param {element} distance - select 要素（value に距離設定値）
+ */
 function changeDistance(distance) {
-  localStorage.setItem("distance", JSON.stringify(distance.value));
-  homeScoreInfo.textContent = distance.value;
-  document.getElementById(distance.value).checked = true;
-}
-function setScoreTable(distance, shots, day) {
-  if (distance == "70m") {
-    data = score[day][1].slice(score[day][1].length - shots,score[day][1].length);
-  } else if (distance == "50m") {
-    data = score[day][2].slice(score[day][2].length - shots,score[day][2].length);
-  } else if (distance == "30m") {
-    data = score[day][3].slice(score[day][3].length - shots,score[day][3].length);
-  } else if (distance == "18m") {
-    data = score[day][4].slice(score[day][4].length - shots,score[day][4].length);
-  } else if (distance == "10m") {
-    data = score[day][5].slice(score[day][5].length - shots,score[day][5].length);
-  } else if (distance == "home") {
-    data = score[day][6].slice(0, score[day][6].length);
+  const selectedValue = distance && distance.value ? distance.value : null;
+  if (!selectedValue || !DISTANCES.includes(selectedValue)) {
+    return;
   }
+  appData.distance = selectedValue;
+  saveAppData();
+  if (homeScoreInfo) {
+    homeScoreInfo.textContent = selectedValue;
+  }
+  const radio = document.getElementById(selectedValue);
+  if (radio) {
+    radio.checked = true;
+  }
+}
+
+/**
+ * スコアテーブルを下書き表示
+ * @param {string} distance - 距離
+ * @param {number} shots - 表示射数
+ * @param {number} day - 日付インデックス
+ */
+function setScoreTable(distance, shots, day) {
+  const values = distance === HOME_DISTANCE
+    ? getScoreColumn(day, HOME_DISTANCE).slice()
+    : getScoreColumn(day, distance).slice(-shots);
+
   for (let i = 0; i < shots; i++) {
-    if (data[i] == undefined) {
-      document.getElementById(distance + "-" + i).textContent = "";
-    } else {
-      document.getElementById(distance + "-" + i).textContent = data[i];
+    const cell = document.getElementById(`${distance}-${i}`);
+    if (cell) {
+      cell.textContent = values[i] === undefined ? "" : values[i];
     }
   }
+
   for (let round = 1; round - 1 < shots / 36; round++) {
-    scoreSumAll = 0;
+    let scoreSumAll = 0;
     for (let j = 1; j <= 6; j++) {
-      scoreSum = 0;
+      let scoreSum = 0;
       for (let i = 0; i < 6; i++) {
-        if (data[i + 6 * (j - 1) + 36 * (round - 1)] == "X") {
+        const value = values[i + 6 * (j - 1) + 36 * (round - 1)];
+        if (value === "X") {
           scoreSum += 10;
           scoreSumAll += 10;
-        } else if (data[i + 6 * (j - 1) + 36 * (round - 1)] == "M") {
-        } else if (
-          data[i + 6 * (j - 1) + 36 * (round - 1)] == undefined ||
-          data[i + 6 * (j - 1) + 36 * (round - 1)] == ""
-        ) {
+        } else if (value === "M") {
+        } else if (value === undefined || value === "") {
           scoreSum = NaN;
           scoreSumAll = NaN;
         } else {
-          scoreSum += Number(data[i + 6 * (j - 1) + 36 * (round - 1)]);
-          scoreSumAll += Number(data[i + 6 * (j - 1) + 36 * (round - 1)]);
+          scoreSum += Number(value);
+          scoreSumAll += Number(value);
         }
       }
-      if (isNaN(scoreSum) || isNaN(scoreSumAll)) {
-        document.getElementById(distance + "Sum-" + Number(j + 6 * (round - 1))).textContent = "";
-        document.getElementById(distance + "All-" + Number(j + 6 * (round - 1))).textContent = "";
-      } else {
-        document.getElementById(distance + "Sum-" + Number(j + 6 * (round - 1))).textContent = scoreSum;
-        document.getElementById(distance + "All-" + Number(j + 6 * (round - 1))).textContent = scoreSumAll;
+      const sumElement = document.getElementById(`${distance}Sum-${j + 6 * (round - 1)}`);
+      const allElement = document.getElementById(`${distance}All-${j + 6 * (round - 1)}`);
+      if (sumElement) {
+        sumElement.textContent = isNaN(scoreSum) ? "" : scoreSum;
+      }
+      if (allElement) {
+        allElement.textContent = isNaN(scoreSumAll) ? "" : scoreSumAll;
       }
     }
   }
 }
+
+/**
+ * 日付選択変更時のハンドラ
+ * @param {element} date - select 要素（value に日付文字列）
+ */
 function changeDateInput(date) {
   recordDate.textContent = date.value;
-  for (let i = 0; i < score.length; i++) {
-    if (score[i][0] == date.value) {
-      makeScoreTable(i);
-      makeGoodScoreTable(i);
-    }
+  const scoreIndex = score.findIndex((entry) => entry.date === date.value);
+  if (scoreIndex !== -1) {
+    makeScoreTable(scoreIndex);
+    makeGoodScoreTable(scoreIndex);
   }
 }
-var memoContent = [];
-if (localStorage.getItem("memoContent")) {
-  memoContent = JSON.parse(localStorage.getItem("memoContent"));
+if (Array.isArray(memoContent) && memoContent.length > 0) {
   makeMemo();
 }
+/**
+ * メモ管理画面を再描画
+ * appData.memoContent からフォルダとメモを再設定
+ */
 function makeMemo() {
-  document.getElementById("memoMain").innerHTML = "";
+  const memoMain = document.getElementById("memoMain");
+  if (!memoMain || !memoFolderTemplate) {
+    return;
+  }
+  memoMain.innerHTML = "";
   for (let j = 0; j < memoContent.length; j++) {
-    var clone = memoFolderTemplate.content.cloneNode(true);
-    document.getElementById("memoMain").appendChild(clone);
-    document.getElementById("memoFolder").setAttribute("id", "memoFolder" + j);
-    document.getElementById("memoInput").setAttribute("id", "memoInput" + j);
-    document.getElementById("memoList").setAttribute("id", "memoList" + j);
-    document.getElementById("memoTitle").textContent = memoContent[j][0];
-    span = document.createElement("span");
-    span.classList.add("material-symbols-outlined");
-    span.setAttribute("id", "memoFolderDelete" + j);
-    span.setAttribute("onclick", "memoFolderDeleteClick(this)");
-    span.textContent = "delete";
-    document.getElementById("memoTitle").append(span);
-    document.getElementById("memoTitle").setAttribute("id", "");
+    const clone = memoFolderTemplate.content.cloneNode(true);
+    memoMain.appendChild(clone);
+    const memoFolder = document.getElementById("memoFolder");
+    const memoInputNode = document.getElementById("memoInput");
+    const memoListNode = document.getElementById("memoList");
+    const memoTitleNode = document.getElementById("memoTitle");
+    if (memoFolder) {
+      memoFolder.setAttribute("id", "memoFolder" + j);
+    }
+    if (memoInputNode) {
+      memoInputNode.setAttribute("id", "memoInput" + j);
+    }
+    if (memoListNode) {
+      memoListNode.setAttribute("id", "memoList" + j);
+    }
+    if (memoTitleNode) {
+      memoTitleNode.textContent = memoContent[j][0];
+      const titleSpan = document.createElement("span");
+      titleSpan.classList.add("material-symbols-outlined");
+      titleSpan.setAttribute("id", "memoFolderDelete" + j);
+      titleSpan.setAttribute("onclick", "memoFolderDeleteClick(this)");
+      titleSpan.textContent = "delete";
+      memoTitleNode.append(titleSpan);
+      memoTitleNode.setAttribute("id", "");
+    }
     for (let i = 1; i < memoContent[j].length; i++) {
-      div = document.createElement("div");
+      const div = document.createElement("div");
       div.classList.add("memoItem");
-      document.getElementById("memoList" + j).append(div);
-      p = document.createElement("p");
+      const listNode = document.getElementById("memoList" + j);
+      if (listNode) {
+        listNode.append(div);
+      }
+      const p = document.createElement("p");
       p.className = memoContent[j][i][1] ? "memoText checked" : "memoText";
       p.setAttribute("id", "memoText" + j + "-" + i);
-      p.setAttribute("onclick", "memoTextClick(this)");
+      p.setAttribute("onclick", "memoTextClick(event, this)");
       p.textContent = memoContent[j][i][0];
       div.append(p);
-      span = document.createElement("span");
-      span.classList.add("material-symbols-outlined");
-      span.setAttribute("id", "memoItemDelete" + j + "-" + i);
-      span.setAttribute("onclick", "memoDeleteClick(this)");
-      span.textContent = "delete";
-      div.append(span);
+      const itemSpan = document.createElement("span");
+      itemSpan.classList.add("material-symbols-outlined");
+      itemSpan.setAttribute("id", "memoItemDelete" + j + "-" + i);
+      itemSpan.setAttribute("onclick", "memoDeleteClick(this)");
+      itemSpan.textContent = "delete";
+      div.append(itemSpan);
     }
   }
 }
+/**
+ * メモ項目削除時のハンドラ（インデックス検証付き）
+ * @param {element} item - 削除ボタン
+ */
 function memoDeleteClick(item) {
-  if (window.confirm("消したくなることを書いたってコト?")) {
-    console.log(item.id);
-    let num = item.id.substring(14).split("-").map(Number);
-    memoContent[num[0]].splice(num[1], 1);
-    localStorage.setItem("memoContent", JSON.stringify(memoContent));
-    makeMemo();
+  const id = item?.id;
+  if (!id || !id.startsWith("memoItemDelete")) {
+    return;
+  }
+  const num = id.substring(14).split("-").map(Number);
+  if (num.length !== 2 || Number.isNaN(num[0]) || Number.isNaN(num[1])) {
+    return;
+  }
+  if (!memoContent[num[0]] || memoContent[num[0]].length <= num[1]) {
+    return;
+  }
+  // グローバル変数に削除対象を保存
+  window.memoDeleteTarget = { type: "item", folderIndex: num[0], itemIndex: num[1] };
+  // ダイアログを表示
+  const dialog = document.getElementById("memoConfirmDialog");
+  const message = document.getElementById("memoConfirmMessage");
+  if (dialog && message) {
+    const memoText = memoContent[num[0]][num[1]][0];
+    message.textContent = "「" + memoText + "」を削除しますか？";
+    dialog.style.display = "block";
   }
 }
+/**
+ * メモフォルダ削除時のハンドラ（インデックス検証付き）
+ * @param {element} item - 削除ボタン
+ */
 function memoFolderDeleteClick(item) {
-  if (window.confirm("ほんとに消えるが？")) {
-    console.log(item.id);
-    let num = item.id.substring(16);
-    memoContent.splice(num, 1);
-    localStorage.setItem("memoContent", JSON.stringify(memoContent));
-    makeMemo();
+  const id = item?.id;
+  if (!id || !id.startsWith("memoFolderDelete")) {
+    return;
+  }
+  const num = Number(id.substring(16));
+  if (Number.isNaN(num) || num < 0 || num >= memoContent.length) {
+    return;
+  }
+  // グローバル変数に削除対象を保存
+  window.memoDeleteTarget = { type: "folder", index: num };
+  // ダイアログを表示
+  const dialog = document.getElementById("memoConfirmDialog");
+  const message = document.getElementById("memoConfirmMessage");
+  if (dialog && message) {
+    message.textContent = "フォルダ「" + memoContent[num][0] + "」を削除しますか？";
+    dialog.style.display = "block";
   }
 }
-function addNewFolder() {
-  folderName = prompt("Folderの名前を入力してください");
-  if (folderName) {
-    memoContent.push([folderName]);
-    localStorage.setItem("memoContent", JSON.stringify(memoContent));
-    makeMemo();
+/**
+ * 新しいメモフォルダを作成ダイアログを表示
+ */
+function memoShowFolderDialog() {
+  const dialog = document.getElementById("memoFolderDialog");
+  const input = document.getElementById("memoFolderInput");
+  if (dialog && input) {
+    input.value = "";
+    dialog.style.display = "block";
+    input.focus();
   }
 }
-function memoClick(memoInput, memoId) {
-  event.preventDefault();
-  var id = memoId.substring(9);
+/**
+ * 新しいメモフォルダを作成（ダイアログOKボタン）
+ */
+function memoFolderOk() {
+  const input = document.getElementById("memoFolderInput");
+  if (!input) return;
+  const folderName = input.value.trim();
+  if (!folderName) {
+    alert("フォルダ名を入力してください");
+    return;
+  }
+  memoContent.push([folderName]);
+  appData.memoContent = memoContent;
+  saveAppData();
+  makeMemo();
+  memoFolderCancel();
+}
+/**
+ * フォルダ作成ダイアログを閉じる
+ */
+function memoFolderCancel() {
+  const dialog = document.getElementById("memoFolderDialog");
+  const input = document.getElementById("memoFolderInput");
+  if (dialog) {
+    dialog.style.display = "none";
+  }
+  if (input) {
+    input.value = "";
+  }
+}
+/**
+ * メモ追加ボタンクリック時のハンドラ
+ * フォルダに新しいメモを追加して表示
+ * @param {event} event - イベントオブジェクト
+ * @param {string} memoInput - 入力テキスト
+ * @param {string} memoId - フォルダ ID（"memoInput0" など）
+ */
+function memoClick(event, memoInput, memoId) {
+  safePreventDefault(event);
+  const id = memoId.substring(9);
+  if (!memoContent[id]) {
+    return;
+  }
   memoContent[id].push([memoInput, false]);
-  div = document.createElement("div");
+  const div = document.createElement("div");
   div.classList.add("memoItem");
-  document.getElementById("memoList" + id).append(div);
-  p = document.createElement("p");
+  const memoListNode = document.getElementById("memoList" + id);
+  if (memoListNode) {
+    memoListNode.append(div);
+  }
+  const p = document.createElement("p");
   p.className = "memoText";
-  p.setAttribute("id","memoText" + id + "-" + Number(memoContent[id].length - 1));
-  p.setAttribute("onclick", "memoTextClick(this)");
+  p.setAttribute("id", "memoText" + id + "-" + Number(memoContent[id].length - 1));
+  p.setAttribute("onclick", "memoTextClick(event, this)");
   p.textContent = memoInput;
   div.append(p);
-  span = document.createElement("span");
+  const span = document.createElement("span");
   span.classList.add("material-symbols-outlined");
-  span.setAttribute("id","memoItemDelete" + id + "-" + Number(memoContent[id].length - 1));
+  span.setAttribute("id", "memoItemDelete" + id + "-" + Number(memoContent[id].length - 1));
   span.setAttribute("onclick", "memoDeleteClick(this)");
   span.textContent = "delete";
   div.append(span);
-  document.getElementById("memoInput" + id).value = "";
-  localStorage.setItem("memoContent", JSON.stringify(memoContent));
+  const memoInputNode = document.getElementById("memoInput" + id);
+  if (memoInputNode) {
+    memoInputNode.value = "";
+  }
+  appData.memoContent = memoContent;
+  saveAppData();
 }
-function memoTextClick(item) {
-  event.preventDefault();
+/**
+ * メモ選択テキストクリック時（チェック不一致）
+ * @param {event} event - イベントオブジェクト
+ * @param {element} item - メモ要素
+ */
+function memoTextClick(event, item) {
+  safePreventDefault(event);
   item.classList.toggle("checked");
   for (let j = 0; j < memoContent.length; j++) {
     for (let i = 1; i < memoContent[j].length; i++) {
       if (item === document.getElementById("memoText" + j + "-" + i)) {
         memoContent[j][i][1] = !memoContent[j][i][1];
-        localStorage.setItem("memoContent", JSON.stringify(memoContent));
+        appData.memoContent = memoContent;
+        saveAppData();
       }
     }
   }
 }
+/**
+ * テーマ変更ハンドラ
+ * @param {string} theme - テーマ名（"Shigure", "Kazama" など）
+ */
 function changeTheme(theme) {
   document.getElementById("html").className = theme;
-  localStorage.setItem("theme", JSON.stringify(theme));
+  appData.theme = theme;
+  saveAppData();
   window.location.reload();
 }
+/**
+ * スコア全削除
+ */
 function settingScoreAllRemove() {
   if (window.confirm("スコアが消えるよん")) {
-    localStorage.removeItem("score");
+    appData.score = [createEmptyScoreEntry(day)];
+    saveAppData();
     window.location.reload();
   }
 }
+/**
+ * appData 全削除（localStorage から削除）
+ */
 function settingDataAllRemove() {
   if (window.confirm("全消したすかる")) {
-    localStorage.clear();
+    localStorage.removeItem(STORAGE_KEY);
     window.location.reload();
   }
 }
+/**
+ * メモ全削除
+ */
 function memoCheckedRemove() {
   if (window.confirm("消したくなることを書いたってコト?")) {
-    localStorage.removeItem("memoContent");
+    appData.memoContent = [];
+    saveAppData();
     window.location.reload();
   }
 }
+/**
+ * 現在の appData を JSON 診断用に表示
+ */
 function settingShowLocalstorage() {
-  alert(JSON.parse(localStorage.getItem("memoContent")));
-  alert(JSON.parse(localStorage.getItem("distance")));
-  alert(JSON.parse(localStorage.getItem("score")));
-  alert(JSON.parse(localStorage.getItem("title")))
-  alert(JSON.parse(localStorage.getItem("theme")));
-  alert(JSON.parse(localStorage.getItem("img")));
+  alert(JSON.stringify(loadJSON(STORAGE_KEY, null), null, 2));
 }
+/**
+ * いいとこどり用ラウンド数を変更
+ * @returns {string} 変更済みのらうんど数（整数）、または 変更前の値
+ */
 function changeGoodScoreRound() {
-  goodScoreRound = prompt("何ラウンド分のいいとこ取りをするか(半角数字のみ)");
-  localStorage.setItem("goodScoreRound", goodScoreRound);
+  const goodScoreRound = prompt("何ラウンド分のいいとこ取りをするか(半角数字のみ)");
+  appData.goodScoreRound = Number(goodScoreRound) || appData.goodScoreRound;
+  saveAppData();
 }
+/**
+ * 距離費制限ゴールを設定（70mのみ）
+ */
 function changeTitle(){
-  title = prompt("タイトルを入力してください")
-  localStorage.setItem("title", title);
-  document.getElementById("title").textContent = title
+  const title = prompt("タイトルを入力してください");
+  if (typeof title === "string") {
+    appData.title = title;
+    saveAppData();
+    document.getElementById("title").textContent = title;
+  }
 }
+/**
+ * 背景画像を Data URL で保存し、設定
+ */
 function imgInput(){
-  const file =document.getElementById("imgInput").files[0]
-  if(file){
-  const reader = new FileReader()
-  reader.readAsDataURL(file)
-  reader.onload = function(){
-    localStorage.setItem("img",reader.result)
-  }}else{
-    localStorage.removeItem("img")
+  const file = document.getElementById("imgInput").files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = function() {
+      appData.img = reader.result;
+      saveAppData();
+      window.location.reload();
+    };
+  } else {
+    appData.img = null;
+    saveAppData();
+    window.location.reload();
   }
-window.location.reload()
 }
+/**
+ * 背景画像を appData.img からロードして接用
+ */
 function imgLoad(){
-  if(localStorage.getItem("img")){
-    if(localStorage.getItem("theme") == '"Transparent"'){ 
-  document.getElementById("body").style.backgroundImage = "url("+localStorage.getItem("img")+")"}
-  else{
-    document.getElementById("home").style.backgroundImage = "url("+localStorage.getItem("img")+")"
-    document.getElementById("record").style.backgroundImage = "url("+localStorage.getItem("img")+")"
-    document.getElementById("memo").style.backgroundImage = "url("+localStorage.getItem("img")+")"
-    document.getElementById("setting").style.backgroundImage = "url("+localStorage.getItem("img")+")"
-  }
-}else{
-  document.getElementById("body").style.backgroundImage = ""
-  document.getElementById("home").style.backgroundImage = ""
-  document.getElementById("record").style.backgroundImage = ""  
-  document.getElementById("memo").style.backgroundImage = ""
-  document.getElementById("setting").style.backgroundImage = ""
+  const imageData = appData.img;
+  if (typeof imageData === "string" && imageData.length) {
+    const theme = appData.theme || "";
+    const imageUrl = "url(" + imageData + ")";
+    if (theme === "Transparent") {
+      document.getElementById("body").style.backgroundImage = imageUrl;
+    } else {
+      document.getElementById("home").style.backgroundImage = imageUrl;
+      document.getElementById("record").style.backgroundImage = imageUrl;
+      document.getElementById("memo").style.backgroundImage = imageUrl;
+      document.getElementById("setting").style.backgroundImage = imageUrl;
+    }
+  } else {
+    document.getElementById("body").style.backgroundImage = "";
+    document.getElementById("home").style.backgroundImage = "";
+    document.getElementById("record").style.backgroundImage = "";
+    document.getElementById("memo").style.backgroundImage = "";
+    document.getElementById("setting").style.backgroundImage = "";
   }
 }
+/**
+ * メモ削除確認ダイアログOKボタン
+ */
+function memoConfirmOk() {
+  const target = window.memoDeleteTarget;
+  if (!target) return;
+  
+  if (target.type === "item") {
+    // メモ項目削除
+    if (memoContent[target.folderIndex] && memoContent[target.folderIndex].length > target.itemIndex) {
+      memoContent[target.folderIndex].splice(target.itemIndex, 1);
+      appData.memoContent = memoContent;
+      saveAppData();
+      makeMemo();
+    }
+  } else if (target.type === "folder") {
+    // メモフォルダ削除
+    if (memoContent.length > target.index) {
+      memoContent.splice(target.index, 1);
+      appData.memoContent = memoContent;
+      saveAppData();
+      makeMemo();
+    }
+  }
+  
+  // ダイアログを閉じる
+  memoConfirmCancel();
+}
+
+/**
+ * メモ削除確認ダイアログキャンセルボタン
+ */
+function memoConfirmCancel() {
+  const dialog = document.getElementById("memoConfirmDialog");
+  if (dialog) {
+    dialog.style.display = "none";
+  }
+  window.memoDeleteTarget = null;
+}
+
 //serviceWorker(正直よくわかんない)
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
     navigator.serviceWorker.register("serviceWorker.js").then(

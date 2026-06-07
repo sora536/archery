@@ -547,3 +547,75 @@ html.Transparent{
   width: 70vw;
   text-align: center;
 }
+
+/* メモダイアログスタイル */
+.memoDialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--main-color);
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  min-width: 250px;
+  max-width: 85vw;
+  border: 2px solid var(--text-color);
+}
+
+.memoDialogContent {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.memoDialog p {
+  margin: 0;
+  font-size: 16px;
+  text-align: center;
+  color: var(--text-color);
+  word-break: break-word;
+  max-height: 100px;
+  overflow-y: auto;
+}
+
+.memoDialogButtons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.memoDialogButtons button {
+  padding: 10px 20px;
+  border: 1px solid var(--text-color);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  flex: 1;
+  max-width: 120px;
+  background-color: var(--main-color);
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+.memoDialogButtons button:hover {
+  transform: scale(1.05);
+  box-shadow: 2px 2px var(--shadow-color);
+}
+
+.memoDialog input[type="text"] {
+  font-size: 14px;
+  padding: 10px;
+  border: 1px solid var(--text-color);
+  border-radius: 4px;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  width: 100%;
+}
+
+.memoDialog input[type="text"]:focus {
+  outline: none;
+  border-color: var(--text-color);
+  box-shadow: 0 0 4px var(--shadow-color);
+}
