@@ -2,7 +2,7 @@
 <html lang="ja" id="html" class="">
   <head>
     <meta charset="UTF-8" />
-    <title>Ianse◯的さむしんぐ</title>
+    <title>Ianseo的さむしんぐ</title>
     <meta name="description" content="'ホーム画面に追加'をして疑似的にアプリ化することを強く推奨します" />
     <meta http-equiv="content-language" content="ja">
     <meta name="google" content="notranslate">
@@ -219,6 +219,241 @@
         </div>
       </div>
     </div>
+    <div class="group" id="group" >
+      <!-- =========================
+       ログイン画面
+       ========================== -->
+      <div id="loginView" class="view">
+        <div class="login-card">
+          <h1 class="login-title"> アーチェリー記録管理</h1>
+          <p class="login-message">
+            Googleアカウントでログインして
+            記録を開始しましょう。
+          </p>
+          <button
+          id="loginButton"
+          class="primary-button"
+          >
+          Googleでログイン
+          </button>
+        </div>
+      </div>
+      <!-- =========================
+       ウェルカム画面
+       ========================== -->
+       <div id = "welcomeView" class="view" hidden>
+          <h1 class="login-title">かぐやっほー</h1>
+          <p class="login-message">
+            Groupに所属してスコアをリアルタイムで共有しよう。
+          </p>
+          <button
+          id="createGroupButton"
+          class="primary-button"
+          >
+          Groupを作成
+          </button>
+          <button 
+          id="joinGroupButton"
+          class="primary-button"
+          >
+          Groupに参加
+          </button>
+
+       </div>
+    <!-- =========================
+     アプリ本体
+     ========================== -->
+     <div
+       id="appView"
+       class="view"
+       hidden
+       >
+       <!-- ===== コンパクトヘッダー ===== -->
+        <header
+        id="controlHeader"
+        class="header">
+        <!-- 左側 -->
+         <div class="header-left">
+          <!-- グループ選択 -->
+           <select
+           id="groupSelect"
+           class="group-select"
+           >
+          <!-- JSで追加 -->
+          <!--
+          <option value="groupId">
+            熊本大学アーチェリー部
+          </option>
+          -->
+          <option disabled>──────────</option>
+          <option value="__JOIN__">＋ 新規グループに所属</option>
+          <option value="__CREATE__">＋ 新規グループを作成</option>
+        </select>
+        <!-- 日付 -->
+        <input
+          type="date"
+          id="dateInput"
+          class="date-input"
+        >
+      </div>
+      <!-- 右側 -->
+      <div
+        id="metricArea"
+        class="header-right"
+      >
+        <button
+          id="bestChip"
+          class="metric-chip active"
+          data-type="best"
+        >
+          最高点
+        </button>
+        <button
+          id="averageChip"
+          class="metric-chip"
+          data-type="average"
+        >
+          平均
+        </button>
+
+        <button
+          id="countChip"
+          class="metric-chip"
+          data-type="count"
+        >
+          数
+        </button>
+      </div>
+    </header>
+
+
+
+    <!-- =====================
+         メイン表示領域
+    ====================== -->
+    <main id="mainArea">
+
+      <!-- ===== ローディング ===== -->
+      <section
+        id="loadingPanel"
+        hidden
+      >
+        <div class="center-card">
+          <div class="loading-spinner"></div>
+          <p>読み込み中...</p>
+        </div>
+      </section>
+
+
+
+      <!-- ===== ホーム（記録一覧） ===== -->
+      <section id="rankingPanel">
+        <div class="ranking-header">
+          <span class="rank-col">#</span>
+          <span class="name-col">名前</span>
+          <span id="valueHeader" class="value-col">最高点</span>
+        </div>
+        <div id="rankingList">
+        </div>
+      </section>
+
+    </main>
+
+  </div>
+  <!-- =========================
+       招待コード入力モーダル
+  ========================== -->
+  <div
+    id="inviteModal"
+    class="modal-overlay"
+    hidden
+  >
+
+    <div class="modal-card">
+
+      <h2>
+        グループに参加
+      </h2>
+
+      <p class="modal-message">
+        招待コードを入力してください
+      </p>
+
+      <input
+        type="text"
+        id="inviteCodeInput"
+        class="modal-input"
+        placeholder="招待コード"
+      >
+      <div class="modal-buttons">
+        <button
+          id="inviteCancelButton"
+          class="secondary-button"
+        >
+          キャンセル
+        </button>
+
+        <button
+          id="inviteSubmitButton"
+          class="primary-button"
+        >
+          参加する
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+  <!-- =========================
+       グループ作成モーダル
+  ========================== -->
+  <div
+    id="createGroupModal"
+    class="modal-overlay"
+    hidden
+  >
+
+    <div class="modal-card">
+
+      <h2>
+        FREEグループ作成
+      </h2>
+
+      <input
+        type="text"
+        id="groupNameInput"
+        class="modal-input"
+        placeholder="グループ名"
+      >
+
+      <input
+        type="password"
+        id="groupPasswordInput"
+        class="modal-input"
+        placeholder="パスワード(覚えててね)"
+      >
+
+      <div class="modal-buttons">
+
+        <button
+          id="createCancelButton"
+          class="secondary-button"
+        >
+          キャンセル
+        </button>
+
+        <button
+          id="createSubmitButton"
+          class="primary-button"
+        >
+          作成する
+        </button>
+
+      </div>
+    </div>
+  </div>
+    </div>
     <div class="memo" id="memo">
       <p class="makeFolder" onclick="memoShowFolderDialog()" ontouchstart="memoShowFolderDialog()"><span
       class="material-icons"
@@ -297,6 +532,7 @@
       <button onclick="changeTitle()">
         titleを変更
       </button>
+      <button id="logoutButton">logout</button>
       <button onclick="memoCheckedRemove()">
         デバック用(memo全消し)
       </button>
@@ -337,6 +573,12 @@
         ontouchstart="footerClick(this,record)"
         >content_paste</span
       >
+      <span 
+        class="material-icons"
+        id="groupButton"
+        onclick="footerClick(this,group)"
+        ontouchstart="footerClick(this,group)"
+      >group</span>
       <span
         class="material-icons"
         id="memoButton"
@@ -430,5 +672,7 @@
     </div>
     <div id="overlay" onclick="overlayClose()" ontouchstart="overlayClose()"></div>
     <script src="main.js"></script>
+    <script type="module" src="/js/main.js"></script>
+    <script type="module" src="./js/module.js"></script>
   </body>
 </html>

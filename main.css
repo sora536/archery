@@ -14,7 +14,9 @@ body {
 p {
   color: var(--text-color);
 }
-
+[hidden] {
+  display: none !important;
+}
 /*色の定義*/
 html {
   --main-color: #a4bfda;
@@ -69,6 +71,12 @@ html.Transparent{
   display: none;
 }
 .record.open {
+  display: block;
+}
+.group{
+  display: none;
+}
+.group.open{
   display: block;
 }
 .memo {
@@ -435,6 +443,442 @@ html.Transparent{
   height: 20px;
   margin: 2px 3vw;
 }
+/*group*/
+.group {
+  height: 90svh;
+  overflow: scroll;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+/* ==========================================
+   新UI(AppView)
+========================================== */
+
+:root{
+  --header-height: 48px;
+  --radius: 16px;
+  --primary: #007bff;
+  --border: rgba(128,128,128,0.3);
+}
+
+/* 共通 */
+
+.view{
+  width:100%;
+  min-height:100svh;
+  background:var(--background-color);
+}
+
+button,
+select,
+input{
+  font-family: inherit;
+}
+
+/* ==========================================
+   ログイン画面
+========================================== */
+
+#loginView{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:95svh;
+  padding:20px;
+  box-sizing:border-box;
+}
+
+.login-card{
+  width:min(90vw,360px);
+  padding:32px 24px;
+  border-radius:24px;
+  background:var(--background-color);
+  box-shadow:0 4px 12px var(--shadow-color);
+}
+
+.login-icon{
+  font-size:56px;
+  margin-bottom:12px;
+}
+
+.login-title{
+  margin:0;
+  color:var(--text-color);
+  font-size:1.6rem;
+}
+
+.login-message{
+  margin:20px 0;
+  color:var(--text-color);
+  line-height:1.7;
+}
+
+.primary-button,
+.secondary-button{
+  width:100%;
+  min-height:46px;
+  margin-top:12px;
+  border-radius:14px;
+  font-size:15px;
+  cursor:pointer;
+  transition:0.15s;
+}
+
+.primary-button{
+  background:#007bff;
+  color:#fff;
+  border:none;
+}
+
+.secondary-button{
+  background:#fff;
+  color:#007bff;
+  border:1px solid #007bff;
+}
+
+.primary-button:active,
+.secondary-button:active{
+  transform:scale(0.98);
+}
+
+/* ==========================================
+   アプリ全体
+========================================== */
+
+#appView{
+  min-height:95svh;
+}
+
+/* ==========================================
+   コンパクトヘッダー
+========================================== */
+
+#controlHeader{
+  position:sticky;
+  top:0;
+  z-index:100;
+  display:block;
+  align-items:center;
+  justify-content:space-between;
+  background:rgba(240,242,241,0.95);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+
+  box-sizing:border-box;
+}
+
+.header-left{
+  width:55%;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+
+.header-right{
+  width:40%;
+  display:inline-flex;
+  justify-content:flex-end;
+  gap:4px;
+}
+
+/* グループ選択 */
+
+.group-select{
+  flex:1;
+  min-width:0;
+  border:none;
+  background:transparent;
+  color:var(--text-color);
+  font-size:13px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.group-select:focus{
+  outline:none;
+}
+
+/* 日付 */
+
+.date-input{
+  width:85px;
+  border:none;
+  background:transparent;
+  color:var(--text-color);
+  font-size:12px;
+}
+
+.date-input:focus{
+  outline:none;
+}
+
+/* チップ */
+
+.metric-chip{
+  padding:0 5px;
+  border-radius:10px;
+  border:1px solid var(--shadow-color);
+  background:var(--background-color);
+  color:var(--text-color);
+  font-size:12px;
+  white-space:nowrap;
+}
+
+.metric-chip.active{
+  background:var(--main-color);
+  border-color:var(--main-color);
+}
+
+/* ==========================================
+   メイン領域
+========================================== */
+
+#mainArea{
+  min-height:calc(95svh - var(--header-height));
+  padding:10px;
+  box-sizing:border-box;
+}
+
+/* ==========================================
+   ウェルカム画面
+========================================== */
+
+#welcomePanel{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:calc(95svh - 80px);
+}
+
+.welcome-card{
+  width:min(90vw,420px);
+  padding:28px 20px;
+  border-radius:24px;
+  background:var(--background-color);
+  box-shadow:0 4px 12px var(--shadow-color);
+}
+
+.welcome-icon{
+  font-size:64px;
+  margin-bottom:12px;
+}
+
+.welcome-title{
+  color:var(--text-color);
+  margin:8px 0 16px;
+}
+
+.welcome-message{
+  color:var(--text-color);
+  line-height:1.7;
+  font-size:14px;
+}
+
+.welcome-actions{
+  margin-top:24px;
+}
+
+/* ==========================================
+   ホーム（記録一覧）
+========================================== */
+/* ===== ランキング全体 ===== */
+
+#rankingList {
+  width: 100%;
+}
+
+/* ===== ヘッダー ===== */
+
+.ranking-header {
+  display: grid;
+  grid-template-columns: 40px 1fr 70px;
+  align-items: center;
+
+  height: 40px;
+  padding: 0 12px;
+
+  font-size: 13px;
+  font-weight: bold;
+  color: #555;
+
+  background: #f3f5f7;
+  border-bottom: 2px solid #d8dde3;
+}
+
+/* ===== ランキング各行 ===== */
+
+.ranking-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 70px;
+  align-items: center;
+
+  min-height: 48px;
+  padding: 0 12px;
+
+  border-bottom: 1px solid var(--shadow-color);
+  transition: background-color 0.15s ease;
+}
+
+/* 1行ごとに背景色を変える */
+.ranking-row:nth-child(odd) {
+  background-color: var(--background-color);
+}
+
+.ranking-row:nth-child(even) {
+  background-color: var(--shadow-color);
+}
+
+
+/* ===== 各列 ===== */
+
+.rank-col {
+  text-align: center;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.name-col {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  padding: 0 8px;
+  font-size: 15px;
+}
+
+.value-col {
+  text-align: right;
+  font-weight: bold;
+  font-size: 16px;
+  color: var(--text-color);
+}
+
+/* ===== 自分の順位を強調したいとき用 ===== */
+
+.ranking-row.my-ranking {
+  background-color: #dceeff !important;
+  border-left: 4px solid #007bff;
+}
+
+
+/* ==========================================
+   ローディング
+========================================== */
+
+#loadingPanel{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:calc(95svh - 60px);
+}
+
+.center-card{
+  padding:24px;
+  color:var(--text-color);
+}
+
+.loading-spinner{
+  width:36px;
+  height:36px;
+  margin:0 auto 16px;
+  border:4px solid var(--shadow-color);
+  border-top:4px solid var(--main-color);
+  border-radius:50%;
+  animation:spin 0.8s linear infinite;
+}
+
+@keyframes spin{
+  from{
+    transform:rotate(0deg);
+  }
+  to{
+    transform:rotate(360deg);
+  }
+}
+
+/* ==========================================
+   モーダル
+========================================== */
+
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+
+  background:rgba(0,0,0,0.45);
+}
+
+.modal-card{
+  width:min(88vw,360px);
+  padding:24px;
+  border-radius:20px;
+
+  background:var(--background-color);
+  box-shadow:0 8px 24px rgba(0,0,0,0.25);
+
+  box-sizing:border-box;
+}
+
+.modal-card h2{
+  margin-top:0;
+  color:var(--text-color);
+}
+
+.modal-message{
+  color:var(--text-color);
+  margin-bottom:16px;
+}
+
+.modal-input{
+  width:100%;
+  margin:8px 0;
+  padding:12px;
+
+  border:1px solid var(--border);
+  border-radius:12px;
+
+  background:transparent;
+  color:var(--text-color);
+
+  box-sizing:border-box;
+}
+
+.modal-input:focus{
+  outline:none;
+  border-color:var(--main-color);
+}
+
+.modal-buttons{
+  display:flex;
+  gap:10px;
+  margin-top:20px;
+}
+
+.modal-buttons button{
+  flex:1;
+  margin:0;
+}
+
+/* ==========================================
+   未所属モード
+========================================== */
+
+#controlHeader.no-group .date-input,
+#controlHeader.no-group .header-right{
+  display:none;
+}
+
+#controlHeader.no-group .header-left{
+  width:100%;
+  justify-content:center;
+}
+
 
 /*memo*/
 

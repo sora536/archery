@@ -2,6 +2,8 @@ const home = document.getElementById("home");
 const homeButton = document.getElementById("homeButton");
 const record = document.getElementById("record");
 const recordButton = document.getElementById("recordButton");
+const group =document.getElementById("group");
+const groupButton = document.getElementById("groupButton");
 const memo = document.getElementById("memo");
 const memoButton = document.getElementById("memoButton");
 const setting = document.getElementById("setting");
@@ -191,7 +193,7 @@ function createDefaultAppData() {
     score: [createEmptyScoreEntry(day)],
     distance: DEFAULT_DISTANCE,
     goodScoreRound: 1,
-    title: "Ianse◯的さむしんぐ",
+    title: "Ianseo的さむしんぐ",
     theme: "",
     memoContent: [],
     img: null,
@@ -226,7 +228,7 @@ function migrateLegacyData() {
     score: Array.isArray(legacyScore) ? legacyScore.map(normalizeScoreEntry) : [createEmptyScoreEntry(day)],
     distance: DISTANCES.includes(legacyDistance) ? legacyDistance : DEFAULT_DISTANCE,
     goodScoreRound: Math.max(1, Number(legacyRound) || 1),
-    title: typeof legacyTitle === "string" ? legacyTitle : "Ianse◯的さむしんぐ",
+    title: typeof legacyTitle === "string" ? legacyTitle : "Ianseo的さむしんぐ",
     theme: typeof legacyTheme === "string" ? legacyTheme : "",
     memoContent: Array.isArray(legacyMemo) ? legacyMemo : [],
     img: typeof legacyImg === "string" ? legacyImg : null,
@@ -427,6 +429,8 @@ function footerClick(e, id) {
   homeButton.classList.remove("open");
   record.classList.remove("open");
   recordButton.classList.remove("open");
+  group.classList.remove("open");
+  groupButton.classList.remove("open");
   memo.classList.remove("open");
   memoButton.classList.remove("open");
   setting.classList.remove("open");
@@ -502,141 +506,314 @@ function makeScoreTable(day) {
     setScoreTable(distance, values.length, day);
   });
 }
+/**
+ * 指定したスコア列から「いいとこどり」を計算する
+ * @param {Array} values - getScoreColumn() が返す配列
+ * @param {number} roundCount - 連続ラウンド数
+ * @returns {{
+ *   bestSegment: Array,
+ *   bestScore: number,
+ *   roundScores: number[],
+ *   bestStartSegmentIndex: number
+ * }}
+ */
+/**
+ * 指定したスコア列から「いいとこどり」を計算する
+ * @param {Array} values - getScoreColumn() が返す配列
+ * @param {number} roundCount - 連続ラウンド数
+ * @returns {{
+ *   bestSegment: Array,
+ *   bestScore: number,
+ *   roundScores: number[],
+ *   bestStartSegmentIndex: number,
+ *   average36: number,
+ *   shotCount: number
+ * }}
+ */
+function getBestSegment(values, roundCount = 1) {
 
+  // ===== 全体の平均・射数計算 =====
+  let totalPoint = 0;
+  let shotCount = 0;
+
+  values.forEach((item) => {
+    if (item === "X") {
+      totalPoint += 10;
+      shotCount++;
+    } else if (item === "M") {
+      shotCount++;
+    } else if (item !== undefined && item !== "") {
+      totalPoint += Number(item);
+      shotCount++;
+    }
+  });
+
+  const average36 =
+    shotCount > 0
+      ? (totalPoint / shotCount) * 36
+      : NaN;
+
+  // ===== 6射ごとのエンド合計 =====
+  const segmentValues = [];
+
+  for (let block = 0; block < values.length / 6; block++) {
+    let subtotal = 0;
+
+    for (let h = 0; h < 6; h++) {
+      const item = values[6 * block + h];
+
+      if (item === "X") {
+        subtotal += 10;
+      } else if (item === "M") {
+        // Mは0点
+      } else if (item === undefined || item === "") {
+        subtotal = NaN;
+        break;
+      } else {
+        subtotal += Number(item);
+      }
+    }
+
+    segmentValues.push(subtotal);
+  }
+
+  // ===== スライディングウィンドウで最高区間探索 =====
+  const windowSize = 6 * roundCount;
+  let bestScore = Number.NEGATIVE_INFINITY;
+  let bestStartSegmentIndex = 0;
+
+  for (let i = 0; i <= segmentValues.length - windowSize; i++) {
+    let total = 0;
+
+    for (let k = 0; k < windowSize; k++) {
+      total += segmentValues[i + k];
+    }
+
+    if (!isNaN(total) && total > bestScore) {
+      bestScore = total;
+      bestStartSegmentIndex = i;
+    }
+  }
+
+  const bestSegment = values.slice(
+    bestStartSegmentIndex * 6,
+    bestStartSegmentIndex * 6 + 36 * roundCount
+  );
+
+  // ===== ラウンドごとの合計 =====
+  const roundScores = [];
+
+  for (let round = 0; round < roundCount; round++) {
+    let total = 0;
+
+    for (let i = 0; i < 36; i++) {
+      const value = bestSegment[36 * round + i];
+
+      if (value === "X") {
+        total += 10;
+      } else if (value === "M") {
+        // 0点
+      } else if (value !== undefined && value !== "") {
+        total += Number(value);
+      }
+    }
+
+    roundScores.push(total);
+  }
+
+  return {
+    bestSegment,
+    bestScore,
+    roundScores,
+    bestStartSegmentIndex,
+    average36,
+    shotCount
+  };
+}
 /**
  * いいとこどりテーブルを生成・表示
  * 連続した指定ラウンド数の中で、合計スコアが最高の区間を抽出して表示
  * @param {number} day - 日付インデックス（0 = 今日）
  */
+/**
+ * いいとこどりテーブルを生成・表示
+ * 連続した指定ラウンド数の中で、合計スコアが最高の区間を表示する
+ * @param {number} day - 日付インデックス（0 = 今日）
+ */
 function makeGoodScoreTable(day) {
-  const roundCount = Math.max(1, Number(appData.goodScoreRound) || 1);
+  const roundCount = Math.max(
+    1,
+    Number(appData.goodScoreRound) || 1
+  );
 
   DISTANCES.forEach((distance) => {
     const values = getScoreColumn(day, distance);
-    
-    // 6射ごとのエンド単位でスコア合計を計算
-    const segmentValues = [];
-    for (let block = 0; block < values.length / 6; block++) {
-      let subtotal = 0;
-      for (let h = 0; h < 6; h++) {
-        const item = values[6 * block + h];
-        if (item === "X") {
-          subtotal += 10;
-        } else if (item === "M") {
-          // M はカウントしない（0点）
-        } else if (item === undefined || item === "") {
-          subtotal = NaN;
-          break;
-        } else {
-          subtotal += Number(item);
-        }
-      }
-      segmentValues.push(subtotal);
-    }
 
-    // スライディングウィンドウで最高ラウンドを検索
-    // windowSize はエンド単位（1ラウンド = 6エンド）
-    const windowSize = 6 * roundCount;
-    const windowSums = [];
-    for (let i = 0; i <= segmentValues.length - windowSize; i++) {
-      let windowTotal = 0;
-      for (let k = 0; k < windowSize; k++) {
-        windowTotal += segmentValues[i + k];
-      }
-      windowSums.push(windowTotal);
-    }
+    const {
+      bestSegment,
+      roundScores
+    } = getBestSegment(values, roundCount);
 
-    let max = Number.NEGATIVE_INFINITY;
-    windowSums.forEach((value) => {
-      if (!isNaN(value)) {
-        max = Math.max(max, value);
-      }
-    });
+    const scoreTable = document.getElementById(
+      distance + "-goodScoreTable"
+    );
 
-    // bestStart は射単位で計算（エンドインデックス × 6）
-    const bestStartSegmentIndex = windowSums.length > 0 && max !== Number.NEGATIVE_INFINITY
-      ? windowSums.indexOf(max)
-      : 0;
-    const bestStart = bestStartSegmentIndex * 6;
-    const bestSegment = values.slice(bestStart, bestStart + 36 * roundCount);
-
-    const scoreTable = document.getElementById(distance + "-goodScoreTable");
     if (!scoreTable) {
       return;
     }
+
     scoreTable.innerHTML = "";
 
-    const roundScores = [];
+    // ===== テーブル描画 =====
     for (let round = 1; round <= roundCount; round++) {
       let roundTotal = 0;
-      let roundSum = 0;
-      const clone = scoreTableTemplate.content.cloneNode(true);
-      const scoreInfo = clone.querySelector("#scoreInfo");
+
+      const clone =
+        scoreTableTemplate.content.cloneNode(true);
+
+      const scoreInfo =
+        clone.querySelector("#scoreInfo");
+
       if (scoreInfo) {
-        scoreInfo.textContent = `${distance}-goodScore-${round}`;
+        scoreInfo.textContent =
+          `${distance}-goodScore-${round}`;
         scoreInfo.removeAttribute("id");
       }
+
       scoreTable.appendChild(clone);
 
       for (let end = 0; end < 6; end++) {
-        const row = document.getElementById(`row-${end + 1}`);
+        const row =
+          document.getElementById(
+            `row-${end + 1}`
+          );
+
         if (!row) {
           continue;
         }
-        let sum = 0;
+
+        let endSum = 0;
+
         for (let i = 0; i < 6; i++) {
-          const index = 6 * end + i + 36 * (round - 1);
-          const value = bestSegment[index];
-          const td = document.createElement("td");
+          const index =
+            6 * end +
+            i +
+            36 * (round - 1);
+
+          const value =
+            bestSegment[index];
+
+          const td =
+            document.createElement("td");
+
           td.textContent = value;
           row.appendChild(td);
+
           if (value === "X") {
-            sum += 10;
+            endSum += 10;
             roundTotal += 10;
           } else if (value === "M") {
-          } else if (value !== undefined && value !== "") {
-            sum += Number(value);
+            // 0点
+          } else if (
+            value !== undefined &&
+            value !== ""
+          ) {
+            endSum += Number(value);
             roundTotal += Number(value);
           }
         }
-        const sumTd = document.createElement("td");
+
+        const sumTd =
+          document.createElement("td");
         sumTd.classList.add("scoreSum");
-        sumTd.textContent = isNaN(sum) ? "" : sum;
+        sumTd.textContent =
+          isNaN(endSum) ? "" : endSum;
         row.appendChild(sumTd);
-        const allTd = document.createElement("td");
-        allTd.classList.add("scoreSum");
-        allTd.textContent = isNaN(roundTotal) ? "" : roundTotal;
-        row.appendChild(allTd);
+
+        const totalTd =
+          document.createElement("td");
+        totalTd.classList.add("scoreSum");
+        totalTd.textContent =
+          isNaN(roundTotal)
+            ? ""
+            : roundTotal;
+        row.appendChild(totalTd);
+
         row.removeAttribute("id");
       }
-      roundScores.push(roundTotal);
     }
 
+    // ===== 平均表示 =====
     const validValues = values
-      .map((item) => (item === "X" ? 10 : item === "M" ? 0 : item === undefined || item === "" ? null : Number(item)))
-      .filter((value) => value !== null);
-    const average = validValues.length !== 0 ? validValues.reduce((acc, num) => acc + num, 0) / validValues.length : NaN;
-    const p = document.createElement("p");
-    p.textContent = "average:" + (average * 36).toFixed(2);
+      .map((item) =>
+        item === "X"
+          ? 10
+          : item === "M"
+          ? 0
+          : item === undefined || item === ""
+          ? null
+          : Number(item)
+      )
+      .filter(
+        (value) => value !== null
+      );
+
+    const average =
+      validValues.length !== 0
+        ? validValues.reduce(
+            (acc, num) => acc + num,
+            0
+          ) / validValues.length
+        : NaN;
+
+    const p =
+      document.createElement("p");
+    p.textContent =
+      "average:" +
+      (average * 36).toFixed(2);
+
     scoreTable.appendChild(p);
 
-    const totalScore = roundScores.reduce((acc, num) => acc + num, 0);
-    const a = document.createElement("a");
-    a.setAttribute("target", "_blank");
-    a.setAttribute("rel", "nofollow noopener");
+    // ===== LINE共有 =====
+    const totalScore =
+      roundScores.reduce(
+        (acc, num) => acc + num,
+        0
+      );
+
+    const a =
+      document.createElement("a");
+
+    a.setAttribute(
+      "target",
+      "_blank"
+    );
+    a.setAttribute(
+      "rel",
+      "nofollow noopener"
+    );
+
     if (roundCount === 2) {
-      a.setAttribute("href", createLineShareUrl(`${distance}\n前半${roundScores[0]}点\n後半${roundScores[1]}点\n合計${totalScore}点でした`));
+      a.setAttribute(
+        "href",
+        createLineShareUrl(
+          `${distance}\n前半${roundScores[0]}点\n後半${roundScores[1]}点\n合計${totalScore}点でした`
+        )
+      );
     } else {
-      a.setAttribute("href", createLineShareUrl(`${distance}${totalScore}点でした`));
+      a.setAttribute(
+        "href",
+        createLineShareUrl(
+          `${distance}${totalScore}点でした`
+        )
+      );
     }
+
     a.textContent = "LINEに送る";
     scoreTable.appendChild(a);
   });
 }
 //新しいテーブルの用意
-/**
- * 距離費が途中のスコアを新規シートか滝申しまじかダイアログを表示
- */
 function newTableClick() {
   if (getScoreColumn(0, HOME_DISTANCE).length !== 0) {
     addTableSelect.value = select.value;
@@ -660,6 +837,7 @@ function addTable() {
   saveScore();
   overlayClose();
   setScoreTable(HOME_DISTANCE, 36, 0);
+  saveScoreApi()
 }
 
 //素点の入力
@@ -714,6 +892,19 @@ function saveCheckClick(event) {
   saveScore();
   overlayClose();
   setScoreTable(HOME_DISTANCE, 36, 0);
+  //ここで自動更新
+  saveScoreApi()
+}
+
+function saveScoreApi(){
+  const targetDistance = finalSelect.value;
+  const values = getScoreColumn(0,targetDistance);
+  const {bestScore,average36,shotCount} = getBestSegment(values, 1);
+  window.Api.api("saveScore",{
+    "maxScore":bestScore,
+    "avgScore":Math.floor(average36,0),
+    "totalArrows":shotCount
+  })
 }
 
 //距離が変わったとき
