@@ -1,10 +1,12 @@
 import { getIdToken } from "./firebase.js";
 import {CONFIG} from "./config.js"
+import { showView } from "./util.js";
 
 const GAS_URL = CONFIG.GAS_URL;
 
 
 export async function api(action, data = {}) {
+  const viewId = showView("loadingView");
   const idToken = await getIdToken();
   console.log("API Post:",action,JSON.stringify({
       "idToken":idToken,
@@ -25,5 +27,6 @@ export async function api(action, data = {}) {
     console.log(result)
     alert(result.message)
   }
+  showView(viewId); 
   return await result;
 }

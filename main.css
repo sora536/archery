@@ -767,11 +767,11 @@ input{
    ローディング
 ========================================== */
 
-#loadingPanel{
+#loadingView{
   display:flex;
   justify-content:center;
   align-items:center;
-  min-height:calc(95svh - 60px);
+  min-height:90vh;
 }
 
 .center-card{

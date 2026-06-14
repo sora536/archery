@@ -263,11 +263,7 @@
     <!-- =========================
      アプリ本体
      ========================== -->
-     <div
-       id="appView"
-       class="view"
-       hidden
-       >
+     <div id="appView" class="view" hidden>
        <!-- ===== コンパクトヘッダー ===== -->
         <header
         id="controlHeader"
@@ -333,15 +329,6 @@
     ====================== -->
     <main id="mainArea">
 
-      <!-- ===== ローディング ===== -->
-      <section
-        id="loadingPanel"
-        hidden
-      >
-        <div class="center-card">
-          <div class="loading-spinner"></div>
-          <p>読み込み中...</p>
-        </div>
       </section>
       <!-- ===== ホーム（記録一覧） ===== -->
       <section id="rankingPanel">
@@ -357,6 +344,13 @@
     </main>
 
   </div>
+    <!-- ===== ローディング ===== -->
+    <div id="loadingView" class="view" hidden>
+        <div class="center-card">
+          <div class="loading-spinner"></div>
+          <p>読み込み中...</p>
+        </div>
+    </div>
   <!-- =========================
        招待コード入力モーダル
   ========================== -->

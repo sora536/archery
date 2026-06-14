@@ -15,7 +15,6 @@ export async function initializeAfterLogin() {
   }
   makeGroupSelect(myGroups)
   changeRanking()
-  // 次はここで画面遷移を管理する
 }
 
 export function showView(viewId) {
@@ -23,11 +22,17 @@ export function showView(viewId) {
     "loginView",
     "appView",
     "welcomeView",
+    "loadingView"
   ];
+  let view = null
   for (const id of views) {
+    if(!document.getElementById(id).hidden){
+      view = id
+    }
     document.getElementById(id).hidden =(id !== viewId);
-
   }
+  console.log(view)
+  return view
 }
 export function showModal(viewId){
   const views=[
@@ -38,6 +43,7 @@ export function showModal(viewId){
     document.getElementById(id).hidden =(id !== viewId);
   }
 }
+
 export function closeModal(){
   const views=[
     "inviteModal",
